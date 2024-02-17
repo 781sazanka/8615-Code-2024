@@ -16,13 +16,13 @@ public class RobotContainer {
     // Replace with CommandPS4Controller or CommandJoystick if needed
     private final Joystick controller = new Joystick(0);
 
-    /** The container for the robot. Contains subsystems, OI devices, and commands. */
+    /**
+     * The container for the robot. Contains subsystems, OI devices, and commands.
+     */
     public RobotContainer() {
         shooter.setDefaultCommand(new ShootCmd(shooter,
                 // X Button to Shoot, A Button to Intake
-                () -> controller.getRawButton(0), () -> controller.getRawButton(1)
-                )
-        );
+                () -> controller.getRawButton(2), () -> controller.getRawButton(1)));
 
         // Configure the trigger bindings
         configureBindings();
@@ -31,8 +31,8 @@ public class RobotContainer {
     private void configureBindings() {
         // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
 
-
-        // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
+        // Schedule `exampleMethodCommand` when the Xbox controller's B button is
+        // pressed,
         // cancelling on release.
     }
 

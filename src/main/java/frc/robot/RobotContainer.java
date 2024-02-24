@@ -24,7 +24,7 @@ public class RobotContainer {
 
   // The robot's subsystems and commands are defined here...
   private final Shooter Shooter = new Shooter();
-  private final XboxController exampleXbox = new XboxController(0);
+  private final XboxController exampleXbox = new XboxController(Constants.Controller.xboxId);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -37,8 +37,8 @@ public class RobotContainer {
     Shooter.setDefaultCommand(
         new ShooterCommand(
             Shooter,
-            () -> exampleXbox.getRawAxis(1),
-            () -> exampleXbox.getRawAxis(5),
+            () -> exampleXbox.getRawAxis(Constants.Controller.shooterXboxLeftAxisId),
+            () -> exampleXbox.getRawAxis(Constants.Controller.shooterXboxRightAxisId),
             () -> exampleXbox.getAButton(),
             () -> exampleXbox.getBButton(),
             () -> exampleXbox.getXButton(),

@@ -5,6 +5,12 @@
 package frc.robot;
 
 public final class Constants {
+  public static class Controller {
+    public static final int xboxId = 0;
+    public static final int shooterXboxLeftAxisId = 1;
+    public static final int shooterXboxRightAxisId = 5;
+  }
+
   public static class Shooter {
     public static final int topFalconMotorCanId = 1;
     public static final int bottomFalconMotorCanId = 4;

@@ -8,6 +8,9 @@ import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
+
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -16,6 +19,8 @@ public class Shooter extends SubsystemBase {
   final TalonFX motor1 = new TalonFX(Constants.Shooter.topFalconMotorCanId, "rio");
   final TalonFX motor2 = new TalonFX(Constants.Shooter.bottomFalconMotorCanId, "rio");
   CANSparkMax SparkMaxMotor = new CANSparkMax(Constants.Shooter.sparkMaxCanId, MotorType.kBrushless);
+
+  final DigitalInput input = new DigitalInput(Constants.Shooter.photoSwitchSensorChannel);;
 
   public Shooter() {
     SparkMaxMotor.restoreFactoryDefaults();
@@ -35,5 +40,6 @@ public class Shooter extends SubsystemBase {
     motor1.stopMotor();
     motor2.stopMotor();
     SparkMaxMotor.stopMotor();
+    SmartDashboard.putBoolean("switch value", input.get());
   }
 }

@@ -20,5 +20,7 @@ public final class Constants {
 
     public static final double falconMotorLowOutput = 0.3; // 0.0 - 1.0
     public static final double falconMotorHighOutput = 0.5; // 0.0 - 1.0
+
+    public static final int photoSwitchSensorChannel = 0;
   }
 }

@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.StatusCode;
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.*;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -28,13 +29,12 @@ public class Shooter extends SubsystemBase {
 
   public Shooter() {
     SparkMaxMotor.restoreFactoryDefaults();
-    talonFXConfig.Slot0.kP = Constants.Shooter.kP;
-    talonFXConfig.Slot0.kI = 0;
-    talonFXConfig.Slot0.kD = 0;
-    talonFXConfig.Slot0.kS = 0;
-    talonFXConfig.Slot0.kV = Constants.Shooter.kV;
-
-    talonFXConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    var talonFXConfig = new Slot0Configs();
+    talonFXConfig.kS = 0.05; // Add 0.05 V output to overcome static friction
+    talonFXConfig.kV = 0.12; // A velocity target of 1 rps results in 0.12 V output
+    talonFXConfig.kP = 0.11; // An error of 1 rps results in 0.11 V output
+    talonFXConfig.kI = 0; // no output for integrated error
+    talonFXConfig.kD = 0; // no output for error derivative
 
     motorLeader.clearStickyFaults(0);
     motorFollower.clearStickyFaults(0);
@@ -82,8 +82,8 @@ public class Shooter extends SubsystemBase {
 
   @Override
   public void periodic() {
-    motorLeader.setNeutralMode(talonFXConfig.MotorOutput.NeutralMode);
-    motorFollower.setNeutralMode(talonFXConfig.MotorOutput.NeutralMode);
+    motorLeader.setNeutralMode(NeutralModeValue.Coast);
+    motorFollower.setNeutralMode(NeutralModeValue.Coast);
     SparkMaxMotor.stopMotor();
     SmartDashboard.putBoolean("switch value", input.get());
   }

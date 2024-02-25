@@ -4,8 +4,11 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.StatusCode;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.*;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 
@@ -16,19 +19,61 @@ import frc.robot.Constants;
 
 public class Shooter extends SubsystemBase {
 
-  final TalonFX motor1 = new TalonFX(Constants.Shooter.topFalconMotorCanId, "rio");
-  final TalonFX motor2 = new TalonFX(Constants.Shooter.bottomFalconMotorCanId, "rio");
+  final TalonFX motorLeader = new TalonFX(Constants.Shooter.topFalconMotorCanId, "rio");
+  final TalonFX motorFollower = new TalonFX(Constants.Shooter.bottomFalconMotorCanId, "rio");
   CANSparkMax SparkMaxMotor = new CANSparkMax(Constants.Shooter.sparkMaxCanId, MotorType.kBrushless);
+  private TalonFXConfiguration talonFXConfig = new TalonFXConfiguration();
 
   final DigitalInput input = new DigitalInput(Constants.Shooter.photoSwitchSensorChannel);;
 
   public Shooter() {
     SparkMaxMotor.restoreFactoryDefaults();
+    talonFXConfig.Slot0.kP = Constants.Shooter.kP;
+    talonFXConfig.Slot0.kI = 0;
+    talonFXConfig.Slot0.kD = 0;
+    talonFXConfig.Slot0.kS = 0;
+    talonFXConfig.Slot0.kV = Constants.Shooter.kV;
+
+    talonFXConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+
+    motorLeader.clearStickyFaults(0);
+    motorFollower.clearStickyFaults(0);
+
+    StatusCode status = StatusCode.StatusCodeNotInitialized;
+
+    for (int i = 0; i < 5; i++) {
+      status = motorLeader.getConfigurator().apply(talonFXConfig);
+      if (status.isOK())
+        break;
+    }
+
+    if (!status.isOK()) {
+      System.out.println(
+          "Talon ID "
+              + motorLeader.getDeviceID()
+              + " failed config with error "
+              + status.toString());
+    }
+
+    status = StatusCode.StatusCodeNotInitialized;
+    for (int i = 0; i < 5; i++) {
+      status = motorFollower.getConfigurator().apply(talonFXConfig);
+      if (status.isOK())
+        break;
+    }
+
+    if (!status.isOK()) {
+      System.out.println(
+          "Talon ID "
+              + motorFollower.getDeviceID()
+              + " failed config with error "
+              + status.toString());
+    }
   }
 
   public void shoot(double output) {
-    motor1.setControl(new DutyCycleOut(output));
-    motor2.setControl(new DutyCycleOut(output));
+    motorLeader.setControl(new DutyCycleOut(output));
+    motorFollower.setControl(new Follower(motorLeader.getDeviceID(), false));
   }
 
   public void feed(double output) {
@@ -37,8 +82,8 @@ public class Shooter extends SubsystemBase {
 
   @Override
   public void periodic() {
-    motor1.stopMotor();
-    motor2.stopMotor();
+    motorLeader.setNeutralMode(talonFXConfig.MotorOutput.NeutralMode);
+    motorFollower.setNeutralMode(talonFXConfig.MotorOutput.NeutralMode);
     SparkMaxMotor.stopMotor();
     SmartDashboard.putBoolean("switch value", input.get());
   }

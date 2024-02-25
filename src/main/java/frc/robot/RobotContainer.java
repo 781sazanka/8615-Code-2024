@@ -4,7 +4,13 @@
 
 package frc.robot;
 
+import com.kauailabs.navx.frc.AHRS;
+
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -23,7 +29,10 @@ import frc.robot.subsystems.Shooter;
 public class RobotContainer {
 
   // The robot's subsystems and commands are defined here...
+  // private final FalconTest FalconTest = new FalconTest();
   private final Shooter Shooter = new Shooter();
+  // Replace with CommandPS4Controller or CommandJoystick if needed
+  // private final Joystick exampleJoystick = new Joystick(0);
   private final XboxController exampleXbox = new XboxController(Constants.Controller.xboxId);
 
   /**
@@ -35,13 +44,9 @@ public class RobotContainer {
     // CANSparkMaxTest.setDefaultCommand(
     // new CANSparkMaxTestObject(CANSparkMaxTest, () -> exampleXbox.getBButton()));
     Shooter.setDefaultCommand(
-        new ShooterCommand(
-            Shooter,
-            () -> exampleXbox.getRawAxis(Constants.Controller.shooterXboxLeftAxisId),
-            () -> exampleXbox.getRawAxis(Constants.Controller.shooterXboxRightAxisId),
-            () -> exampleXbox.getAButton(),
-            () -> exampleXbox.getBButton(),
-            () -> exampleXbox.getXButton(),
+        new ShooterCommand(Shooter, () -> exampleXbox.getRawAxis(Constants.Shooter.topFalconMotorCanId),
+            () -> exampleXbox.getRawAxis(Constants.Shooter.bottomFalconMotorCanId),
+            () -> exampleXbox.getAButton(), () -> exampleXbox.getBButton(), () -> exampleXbox.getXButton(),
             () -> exampleXbox.getYButton()));
     // NavXTest.setDefaultCommand(new NavXTestObject(NavXTest));
     // Configure the trigger bindings

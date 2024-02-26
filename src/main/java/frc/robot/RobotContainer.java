@@ -9,7 +9,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.CommandStatus;
+import frc.robot.commands.ClimbCommand;
 import frc.robot.commands.ShooterCommand;
+import frc.robot.subsystems.Climb.Climb;
 import frc.robot.subsystems.Shooter.Shooter;
 
 /**
@@ -29,6 +31,7 @@ public class RobotContainer {
   // private final Joystick exampleJoystick = new Joystick(0);
   private final XboxController exampleXbox = new XboxController(Constants.Controller.xboxId);
   private final Shooter Shooter = new Shooter();
+  private final Climb Climb = new Climb();
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -40,6 +43,18 @@ public class RobotContainer {
               () -> exampleXbox.getRawAxis(Constants.Shooter.bottomFalconMotorCanId),
               () -> exampleXbox.getAButton(), () -> exampleXbox.getBButton(), () -> exampleXbox.getXButton(),
               () -> exampleXbox.getYButton()));
+    }
+
+    if (CommandStatus.testClimb) {
+      Climb.setDefaultCommand(
+          new ClimbCommand(Climb,
+              () -> exampleXbox.getAButton(), () -> exampleXbox.getBButton()));
+    }
+
+    if (CommandStatus.testArm) {
+      Climb.setDefaultCommand(
+          new ClimbCommand(Climb,
+              () -> exampleXbox.getAButton(), () -> exampleXbox.getBButton()));
     }
     // Configure the trigger bindings
 

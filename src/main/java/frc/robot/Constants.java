@@ -13,6 +13,8 @@ public final class Constants {
 
   public static class CommandStatus {
     public static final boolean testShooter = false;
+    public static final boolean testClimb = false;
+    public static final boolean testArm = false;
   }
 
   public static class Shooter {
@@ -42,5 +44,13 @@ public final class Constants {
     public static final double tightenSpeed = 0.1;
 
     public static final int rotations = 15;
+  }
+
+  public static class Arm {
+    public static final int leaderCanId = 5;
+    public static final int followerCanId = 6;
+
+    public static final int lowerPosition = 15;
+    public static final int higherPosition = 25;
   }
 }

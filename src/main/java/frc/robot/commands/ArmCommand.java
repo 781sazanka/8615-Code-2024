@@ -8,43 +8,50 @@ import edu.wpi.first.wpilibj2.command.Command;
 
 import java.util.function.Supplier;
 import frc.robot.Constants;
-import frc.robot.subsystems.Climb.Climb;
+import frc.robot.subsystems.Arm.Arm;
 
-public class ClimbCommand extends Command {
-    private final Climb climb;
+public class ArmCommand extends Command {
+    private final Arm Arm;
 
     private final boolean isAButtonPressed;
     private final boolean isBButtonPressed;
+    private final double leftAxis;
+    private final double rightAxis;
 
     public final boolean setSetpointEnabled = true;
 
-    public ClimbCommand(
-            Climb subsystem,
+    public ArmCommand(
+            Arm subsystem,
+            Supplier<Double> leftAxisValue,
+            Supplier<Double> rightAxisValue,
             Supplier<Boolean> AButton,
             Supplier<Boolean> BButton) {
 
-        climb = subsystem;
+        Arm = subsystem;
         isAButtonPressed = AButton.get();
         isBButtonPressed = BButton.get();
-
-        addRequirements(climb);
+        leftAxis = leftAxisValue.get();
+        rightAxis = leftAxisValue.get();
+        addRequirements(Arm);
     }
 
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        climb.setSetpoint(Constants.Climb.rotations);
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        if (isAButtonPressed) {
-            climb.tighten();
+        if (rightAxis >= 0.0) {
+            Arm.up(rightAxis * Constants.Shooter.falconSpeedMultiplier);
+        } else if (leftAxis >= 0.0) {
+            Arm.down(leftAxis * Constants.Shooter.falconSpeedMultiplier);
+        } else if (isAButtonPressed) {
+            Arm.setSetpoint(Constants.Arm.lowerPosition);
         } else if (isBButtonPressed) {
-            climb.loosen();
+            Arm.setSetpoint(Constants.Arm.higherPosition);
         }
-
     }
 
     // Called once the command ends or is interrupted.

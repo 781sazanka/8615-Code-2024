@@ -1,1 +1,2 @@
-# SAZANKA Robotics RobotCode for FRC2024 CRESCENDO
+# Code for controls
+- Shooter

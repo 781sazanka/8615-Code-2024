@@ -9,10 +9,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.CommandStatus;
+import frc.robot.commands.ArmCommand;
 import frc.robot.commands.ClimbCommand;
 import frc.robot.commands.ShooterCommand;
 import frc.robot.subsystems.Climb.Climb;
 import frc.robot.subsystems.Shooter.Shooter;
+import frc.robot.subsystems.Arm.Arm;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -32,6 +34,7 @@ public class RobotContainer {
   private final XboxController exampleXbox = new XboxController(Constants.Controller.xboxId);
   private final Shooter Shooter = new Shooter();
   private final Climb Climb = new Climb();
+  private final Arm Arm = new Arm();
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -52,8 +55,9 @@ public class RobotContainer {
     }
 
     if (CommandStatus.testArm) {
-      Climb.setDefaultCommand(
-          new ClimbCommand(Climb,
+      Arm.setDefaultCommand(
+          new ArmCommand(Arm, () -> exampleXbox.getRawAxis(Constants.Shooter.topFalconMotorCanId),
+              () -> exampleXbox.getRawAxis(Constants.Shooter.bottomFalconMotorCanId),
               () -> exampleXbox.getAButton(), () -> exampleXbox.getBButton()));
     }
     // Configure the trigger bindings

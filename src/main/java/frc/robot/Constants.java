@@ -47,8 +47,8 @@ public final class Constants {
   }
 
   public static class Arm {
-    public static final int leaderCanId = 5;
-    public static final int followerCanId = 6;
+    public static final int leaderCanId = 7;
+    public static final int followerCanId = 8;
 
     public static final int lowerPosition = 15;
     public static final int higherPosition = 25;

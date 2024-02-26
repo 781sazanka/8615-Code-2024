@@ -4,18 +4,13 @@
 
 package frc.robot;
 
-import com.kauailabs.navx.frc.AHRS;
-
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.CommandStatus;
 import frc.robot.commands.ShooterCommand;
-import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Shooter.Shooter;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -30,25 +25,22 @@ public class RobotContainer {
 
   // The robot's subsystems and commands are defined here...
   // private final FalconTest FalconTest = new FalconTest();
-  private final Shooter Shooter = new Shooter();
   // Replace with CommandPS4Controller or CommandJoystick if needed
   // private final Joystick exampleJoystick = new Joystick(0);
   private final XboxController exampleXbox = new XboxController(Constants.Controller.xboxId);
+  private final Shooter Shooter = new Shooter();
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-    // FalconTest.setDefaultCommand(
-    // new FalconTestObject(FalconTest, () -> exampleXbox.getBButton()));
-    // CANSparkMaxTest.setDefaultCommand(
-    // new CANSparkMaxTestObject(CANSparkMaxTest, () -> exampleXbox.getBButton()));
-    Shooter.setDefaultCommand(
-        new ShooterCommand(Shooter, () -> exampleXbox.getRawAxis(Constants.Shooter.topFalconMotorCanId),
-            () -> exampleXbox.getRawAxis(Constants.Shooter.bottomFalconMotorCanId),
-            () -> exampleXbox.getAButton(), () -> exampleXbox.getBButton(), () -> exampleXbox.getXButton(),
-            () -> exampleXbox.getYButton()));
-    // NavXTest.setDefaultCommand(new NavXTestObject(NavXTest));
+    if (CommandStatus.testShooter) {
+      Shooter.setDefaultCommand(
+          new ShooterCommand(Shooter, () -> exampleXbox.getRawAxis(Constants.Shooter.topFalconMotorCanId),
+              () -> exampleXbox.getRawAxis(Constants.Shooter.bottomFalconMotorCanId),
+              () -> exampleXbox.getAButton(), () -> exampleXbox.getBButton(), () -> exampleXbox.getXButton(),
+              () -> exampleXbox.getYButton()));
+    }
     // Configure the trigger bindings
 
     configureBindings();

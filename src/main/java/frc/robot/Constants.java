@@ -11,6 +11,10 @@ public final class Constants {
     public static final int shooterXboxRightAxisId = 5;
   }
 
+  public static class CommandStatus {
+    public static final boolean testShooter = false;
+  }
+
   public static class Shooter {
     public static final int topFalconMotorCanId = 1;
     public static final int bottomFalconMotorCanId = 4;
@@ -28,5 +32,15 @@ public final class Constants {
     public static final double kP = 0.11; // An error of 1 rps results in 0.11 V output
     public static final double kI = 0; // no output for integrated error
     public static final double kD = 0; // no output for error derivative
+  }
+
+  public static class Climb {
+    public static final int leaderCanId = 5;
+    public static final int followerCanId = 6;
+
+    public static final double loosenSpeed = 0.1;
+    public static final double tightenSpeed = 0.1;
+
+    public static final int rotations = 15;
   }
 }

@@ -8,7 +8,8 @@ import com.pathplanner.lib.util.PIDConstants;
 
 public final class Constants {
   public static class Controller {
-    public static final int xboxID = 0;
+    public static final int controllerXboxID = 0;
+    public static final int driveXboxID = 1;
     public static final int shooterXboxLeftAxisId = 1;
     public static final int shooterXboxRightAxisId = 5;
     public static final int armXboxUpAxisId = 2;

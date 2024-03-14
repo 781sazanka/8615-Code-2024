@@ -37,7 +37,8 @@ import frc.robot.util.Camera;
  */
 public class RobotContainer {
   private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve"));
-  private final CommandXboxController operatorXbox = new CommandXboxController(Constants.Controller.xboxID);
+  private final CommandXboxController controllerXbox = new CommandXboxController(Constants.Controller.controllerXboxID);
+  private final CommandXboxController driveXbox = new CommandXboxController(Constants.Controller.driveXboxID);
   private final Shooter Shooter = new Shooter();
   private final Climb Climb = new Climb();
   private final Arm Arm = new Arm();
@@ -54,36 +55,35 @@ public class RobotContainer {
   public RobotContainer() {
     if (CommandStatus.testShooter) {
       Shooter.setDefaultCommand(
-          new ShooterExample(Shooter, () -> operatorXbox.getRawAxis(Constants.Shooter.topFalconMotorCANID),
-              () -> operatorXbox.getRawAxis(Constants.Shooter.bottomFalconMotorCANID),
-              () -> operatorXbox.a().getAsBoolean(), () -> operatorXbox.b().getAsBoolean()));
+          new ShooterExample(Shooter, () -> controllerXbox.getRawAxis(Constants.Shooter.topFalconMotorCANID),
+              () -> controllerXbox.getRawAxis(Constants.Shooter.bottomFalconMotorCANID),
+              () -> controllerXbox.a().getAsBoolean(), () -> controllerXbox.b().getAsBoolean()));
     }
 
     if (CommandStatus.testClimb) {
       Climb.setDefaultCommand(
           new ClimbExample(Climb,
-              () -> operatorXbox.x().getAsBoolean(), () -> operatorXbox.y().getAsBoolean()));
+              () -> controllerXbox.x().getAsBoolean(), () -> controllerXbox.y().getAsBoolean()));
     }
 
     if (CommandStatus.testArm) {
       Arm.setDefaultCommand(
-          new ArmExample(Arm, () -> operatorXbox.getRawAxis(Constants.Controller.armXboxUpAxisId),
-              () -> operatorXbox.getRawAxis(Constants.Controller.armXboxDownAxisId)));
+          new ArmExample(Arm, () -> controllerXbox.getRawAxis(Constants.Controller.armXboxUpAxisId),
+              () -> controllerXbox.getRawAxis(Constants.Controller.armXboxDownAxisId)));
     }
-    // Configure the trigger bindings
-
-    configureBindings();
 
     cam.cameraStream();
 
-    // Command driveFieldOrientedDirectAngle = drivebase.driveCommand(
-    // () -> MathUtil.applyDeadband(Xbox.getLeftY(),
-    // OperatorConstants.LEFT_Y_DEADBAND),
-    // () -> MathUtil.applyDeadband(Xbox.getLeftX(),
-    // OperatorConstants.LEFT_X_DEADBAND),
-    // () -> Xbox.getRightX(),
-    // () -> Xbox.getRightY());
-    // drivebase.setDefaultCommand(driveFieldOrientedDirectAngle);
+    Command driveFieldOrientedDirectAngle = drivebase.driveCommand(
+        () -> MathUtil.applyDeadband(driveXbox.getLeftY(),
+            OperatorConstants.LEFT_Y_DEADBAND),
+        () -> MathUtil.applyDeadband(driveXbox.getLeftX(),
+            OperatorConstants.LEFT_X_DEADBAND),
+        () -> driveXbox.getRightX(),
+        () -> driveXbox.getRightY());
+    drivebase.setDefaultCommand(driveFieldOrientedDirectAngle);
+
+    configureBindings();
   }
 
   /**
@@ -101,10 +101,10 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    operatorXbox.leftBumper().onTrue(Commands.runOnce(() -> shootToSpeaker.Shoot()));
-    operatorXbox.rightBumper().whileTrue(new DriveToSpeaker(drivebase,
-        () -> MathUtil.applyDeadband(-operatorXbox.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
-        () -> MathUtil.applyDeadband(-operatorXbox.getLeftX(), OperatorConstants.LEFT_X_DEADBAND)));
+    controllerXbox.leftBumper().onTrue(Commands.runOnce(() -> shootToSpeaker.Shoot()));
+    controllerXbox.rightBumper().whileTrue(new DriveToSpeaker(drivebase,
+        () -> MathUtil.applyDeadband(-controllerXbox.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
+        () -> MathUtil.applyDeadband(-controllerXbox.getLeftX(), OperatorConstants.LEFT_X_DEADBAND)));
   }
 
   /**

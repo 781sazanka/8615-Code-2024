@@ -31,7 +31,7 @@ public class RobotContainer {
   // private final FalconTest FalconTest = new FalconTest();
   // Replace with CommandPS4Controller or CommandJoystick if needed
   // private final Joystick exampleJoystick = new Joystick(0);
-  private final XboxController exampleXbox = new XboxController(Constants.Controller.xboxId);
+  private final XboxController Xbox = new XboxController(Constants.Controller.xboxId);
   private final Shooter Shooter = new Shooter();
   private final Climb Climb = new Climb();
   private final Arm Arm = new Arm();
@@ -42,23 +42,23 @@ public class RobotContainer {
   public RobotContainer() {
     if (CommandStatus.testShooter) {
       Shooter.setDefaultCommand(
-          new ShooterCommand(Shooter, () -> exampleXbox.getRawAxis(Constants.Shooter.topFalconMotorCanId),
-              () -> exampleXbox.getRawAxis(Constants.Shooter.bottomFalconMotorCanId),
-              () -> exampleXbox.getAButton(), () -> exampleXbox.getBButton(), () -> exampleXbox.getXButton(),
-              () -> exampleXbox.getYButton()));
+          new ShooterCommand(Shooter, () -> Xbox.getRawAxis(Constants.Shooter.topFalconMotorCANID),
+              () -> Xbox.getRawAxis(Constants.Shooter.bottomFalconMotorCANID),
+              () -> Xbox.getAButton(), () -> Xbox.getBButton(), () -> Xbox.getXButton(),
+              () -> Xbox.getYButton()));
     }
 
     if (CommandStatus.testClimb) {
       Climb.setDefaultCommand(
           new ClimbCommand(Climb,
-              () -> exampleXbox.getAButton(), () -> exampleXbox.getBButton()));
+              () -> Xbox.getAButton(), () -> Xbox.getBButton()));
     }
 
     if (CommandStatus.testArm) {
       Arm.setDefaultCommand(
-          new ArmCommand(Arm, () -> exampleXbox.getRawAxis(Constants.Shooter.topFalconMotorCanId),
-              () -> exampleXbox.getRawAxis(Constants.Shooter.bottomFalconMotorCanId),
-              () -> exampleXbox.getAButton(), () -> exampleXbox.getBButton()));
+          new ArmCommand(Arm, () -> Xbox.getRawAxis(Constants.Shooter.topFalconMotorCANID),
+              () -> Xbox.getRawAxis(Constants.Shooter.bottomFalconMotorCANID),
+              () -> Xbox.getAButton(), () -> Xbox.getBButton()));
     }
     // Configure the trigger bindings
 

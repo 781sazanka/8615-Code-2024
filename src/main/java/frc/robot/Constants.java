@@ -18,9 +18,9 @@ public final class Constants {
   }
 
   public static class Shooter {
-    public static final int topFalconMotorCanId = 1;
-    public static final int bottomFalconMotorCanId = 4;
-    public static final int sparkMaxCanId = 9;
+    public static final int topFalconMotorCANID = 1;
+    public static final int bottomFalconMotorCANID = 4;
+    public static final int sparkMaxCANID = 9;
 
     public static final double falconSpeedMultiplier = 0.5; // 0.0 - 1.0
 
@@ -37,8 +37,8 @@ public final class Constants {
   }
 
   public static class Climb {
-    public static final int leaderCanId = 5;
-    public static final int followerCanId = 6;
+    public static final int leaderCANID = 5;
+    public static final int followerCANID = 6;
 
     public static final double loosenSpeed = 0.1;
     public static final double tightenSpeed = 0.1;
@@ -47,8 +47,8 @@ public final class Constants {
   }
 
   public static class Arm {
-    public static final int leaderCanId = 7;
-    public static final int followerCanId = 8;
+    public static final int leaderCANID = 7;
+    public static final int followerCANID = 8;
 
     public static final int lowerPosition = 15;
     public static final int higherPosition = 25;

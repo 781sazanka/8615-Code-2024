@@ -16,9 +16,9 @@ import frc.robot.Constants;
 
 public class Shooter extends SubsystemBase {
 
-    final TalonFX motorLeader = new TalonFX(Constants.Shooter.topFalconMotorCanId, "rio");
-    final TalonFX motorFollower = new TalonFX(Constants.Shooter.bottomFalconMotorCanId, "rio");
-    final CANSparkMax sparkMaxMotor = new CANSparkMax(Constants.Shooter.sparkMaxCanId, MotorType.kBrushless);
+    final TalonFX motorLeader = new TalonFX(Constants.Shooter.topFalconMotorCANID, "rio");
+    final TalonFX motorFollower = new TalonFX(Constants.Shooter.bottomFalconMotorCANID, "rio");
+    final CANSparkMax sparkMaxMotor = new CANSparkMax(Constants.Shooter.sparkMaxCANID, MotorType.kBrushless);
 
     final DigitalInput input = new DigitalInput(Constants.Shooter.photoSwitchSensorChannel);
 

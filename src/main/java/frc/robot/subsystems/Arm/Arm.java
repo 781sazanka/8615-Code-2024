@@ -15,8 +15,8 @@ import frc.robot.Constants;
 
 public class Arm extends SubsystemBase {
 
-    final CANSparkMax leaderMotor = new CANSparkMax(Constants.Arm.leaderCanId, MotorType.kBrushless);
-    final CANSparkMax followerMotor = new CANSparkMax(Constants.Arm.followerCanId, MotorType.kBrushless);
+    final CANSparkMax leaderMotor = new CANSparkMax(Constants.Arm.leaderCANID, MotorType.kBrushless);
+    final CANSparkMax followerMotor = new CANSparkMax(Constants.Arm.followerCANID, MotorType.kBrushless);
     private AbsoluteEncoder encoder;
     private SparkPIDController pidController;
     public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;

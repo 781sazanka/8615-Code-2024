@@ -39,12 +39,9 @@ public final class Constants {
     public static final int topFalconMotorCANID = 1;
     public static final int bottomFalconMotorCANID = 4;
     public static final int sparkMaxCANID = 9;
-
     public static final double falconSpeedMultiplier = 0.5; // 0.0 - 1.0
-
     public static final double falconMotorLowOutput = 0.3; // 0.0 - 1.0
     public static final double falconMotorHighOutput = 0.5; // 0.0 - 1.0
-
     public static final int photoSwitchSensorChannel = 0;
 
     public static final double kS = 0.05; // Add 0.05 V output to overcome static friction
@@ -58,8 +55,9 @@ public final class Constants {
     public static final int leaderCANID = 5;
     public static final int followerCANID = 6;
 
-    public static final double loosenSpeed = 0.1;
-    public static final double tightenSpeed = 0.1;
+    public static final double loosenSpeed = -0.3;
+    public static final double tightenSpeed = 0.4;
+    public static final double keepCurrentPositionSpeed = 0.2;
 
     public static final int rotations = 15;
   }

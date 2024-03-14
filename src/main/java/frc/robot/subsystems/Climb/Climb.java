@@ -21,10 +21,14 @@ public class Climb extends SubsystemBase {
     }
 
     public void loosen() {
-        leaderMotor.set(Constants.Climb.loosenSpeed);
+        leaderMotor.set(Constants.Climb.keepCurrentPositionSpeed + Constants.Climb.loosenSpeed);
     }
 
     public void tighten() {
         leaderMotor.set(Constants.Climb.tightenSpeed);
+    }
+
+    public void setCurrent() {
+        leaderMotor.set(Constants.Climb.keepCurrentPositionSpeed);
     }
 }

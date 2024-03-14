@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.climb.Climb;
+import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.Constants.CommandStatus;
 import frc.robot.Constants.OperatorConstants;
@@ -42,6 +43,7 @@ public class RobotContainer {
   private final Shooter Shooter = new Shooter();
   private final Climb Climb = new Climb();
   private final Arm Arm = new Arm();
+  private final Intake Intake = new Intake();
   private final Camera cam = new Camera();
 
   private final ShootToSpeaker shootToSpeaker = new ShootToSpeaker();
@@ -79,8 +81,8 @@ public class RobotContainer {
             OperatorConstants.LEFT_Y_DEADBAND),
         () -> MathUtil.applyDeadband(driveXbox.getLeftX(),
             OperatorConstants.LEFT_X_DEADBAND),
-        () -> driveXbox.getRightX(),
-        () -> driveXbox.getRightY());
+        driveXbox::getRightX,
+        driveXbox::getRightY);
     drivebase.setDefaultCommand(driveFieldOrientedDirectAngle);
 
     configureBindings();
@@ -101,10 +103,12 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    controllerXbox.leftBumper().onTrue(Commands.runOnce(() -> shootToSpeaker.Shoot()));
-    controllerXbox.rightBumper().whileTrue(new DriveToSpeaker(drivebase,
-        () -> MathUtil.applyDeadband(-controllerXbox.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
-        () -> MathUtil.applyDeadband(-controllerXbox.getLeftX(), OperatorConstants.LEFT_X_DEADBAND)));
+    driveXbox.leftBumper().onTrue(Commands.runOnce(shootToSpeaker::Shoot));
+    driveXbox.rightBumper().whileTrue(new DriveToSpeaker(drivebase,
+        () -> MathUtil.applyDeadband(-driveXbox.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
+        () -> MathUtil.applyDeadband(-driveXbox.getLeftX(), OperatorConstants.LEFT_X_DEADBAND)));
+
+    controllerXbox.leftBumper().whileTrue(Intake.feed(0.2));
   }
 
   /**

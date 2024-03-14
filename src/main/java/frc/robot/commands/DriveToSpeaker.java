@@ -1,7 +1,7 @@
 package frc.robot.commands;
 
+import java.util.logging.Logger;
 import java.util.function.DoubleSupplier;
-
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
@@ -13,6 +13,8 @@ public class DriveToSpeaker extends Command {
     private DoubleSupplier translationX;
     private DoubleSupplier translationY;
     private double heading;
+
+    Logger logger = Logger.getLogger(getClass().getName());
 
     public DriveToSpeaker(SwerveSubsystem swerveSubsystem, DoubleSupplier translationX, DoubleSupplier translationY) {
         this.swerve = swerveSubsystem;
@@ -28,12 +30,9 @@ public class DriveToSpeaker extends Command {
         if (LL.isTargetValid()) {
             heading = -1 * LL.getTxAsDouble() / 70;
         } else {
-            System.out.println("Lost Target!");
+            logger.info("Lost target!!");
             heading = 0;
         }
-
-        // System.out.println("Target is: " + heading);
-        // SwerveSub.driveCommand(translationX, translationY, heading);
 
         swerve.swerveDrive.drive(
                 new Translation2d(Math.pow(translationX.getAsDouble(), 3) * swerve.swerveDrive.getMaximumVelocity(),

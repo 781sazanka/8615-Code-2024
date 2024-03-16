@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems.arm;
+package frc.robot.subsystems.Pivot;
 
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
-public class Arm extends SubsystemBase {
+public class Pivot extends SubsystemBase {
 
     final CANSparkMax leaderMotor = new CANSparkMax(Constants.Arm.leaderCANID, MotorType.kBrushless);
     final CANSparkMax followerMotor = new CANSparkMax(Constants.Arm.followerCANID, MotorType.kBrushless);
@@ -21,7 +21,7 @@ public class Arm extends SubsystemBase {
     private SparkPIDController pidController;
     public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;
 
-    public Arm() {
+    public Pivot() {
         encoder = leaderMotor.getAbsoluteEncoder(Type.kDutyCycle);
         pidController = leaderMotor.getPIDController();
         pidController.setFeedbackDevice(encoder);

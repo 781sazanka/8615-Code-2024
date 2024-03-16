@@ -69,4 +69,9 @@ public final class Constants {
     public static final int lowerPosition = 15;
     public static final int higherPosition = 25;
   }
+
+  public static class Intake {
+    public static final int leaderCANID = 40;
+    public static final int followerCANID = 41;
+  }
 }

@@ -5,7 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.climb.Climb;
+import frc.robot.subsystems.Climb.Climb;
 
 import java.util.function.Supplier;
 

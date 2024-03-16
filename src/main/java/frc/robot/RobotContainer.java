@@ -12,11 +12,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.Commands;
-
-import frc.robot.subsystems.arm.Arm;
-import frc.robot.subsystems.climb.Climb;
-import frc.robot.subsystems.intake.Intake;
-import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.Climb.Climb;
+import frc.robot.subsystems.Feeder.Feeder;
+import frc.robot.subsystems.Pivot.*;
+import frc.robot.subsystems.Shooter.Shooter;
 import frc.robot.Constants.CommandStatus;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.ArmExample;
@@ -42,8 +41,8 @@ public class RobotContainer {
   private final CommandXboxController driveXbox = new CommandXboxController(Constants.Controller.driveXboxID);
   private final Shooter Shooter = new Shooter();
   private final Climb Climb = new Climb();
-  private final Arm Arm = new Arm();
-  private final Intake Intake = new Intake();
+  private final Pivot Arm = new Pivot();
+  private final Feeder Intake = new Feeder();
   private final Camera cam = new Camera();
 
   private final ShootToSpeaker shootToSpeaker = new ShootToSpeaker();

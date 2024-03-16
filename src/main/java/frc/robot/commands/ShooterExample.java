@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 
 import java.util.function.Supplier;
 import frc.robot.Constants;
-import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.Shooter.Shooter;
 
 public class ShooterExample extends Command {
     private final boolean isAButtonPressed;

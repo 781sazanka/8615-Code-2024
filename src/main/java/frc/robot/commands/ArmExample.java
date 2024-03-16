@@ -5,12 +5,12 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.Pivot.Pivot;
 
 import java.util.function.Supplier;
-import frc.robot.subsystems.arm.Arm;
 
 public class ArmExample extends Command {
-    private final Arm Arm;
+    private final Pivot Arm;
 
     private final double leftAxis;
     private final double rightAxis;
@@ -18,7 +18,7 @@ public class ArmExample extends Command {
     public final boolean setSetpointEnabled = true;
 
     public ArmExample(
-            Arm subsystem,
+            Pivot subsystem,
             Supplier<Double> leftAxisValue,
             Supplier<Double> rightAxisValue) {
 

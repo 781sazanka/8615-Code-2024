@@ -15,8 +15,8 @@ import frc.robot.Constants;
 
 public class Pivot extends SubsystemBase {
 
-    final CANSparkMax leaderMotor = new CANSparkMax(Constants.Arm.leaderCANID, MotorType.kBrushless);
-    final CANSparkMax followerMotor = new CANSparkMax(Constants.Arm.followerCANID, MotorType.kBrushless);
+    final CANSparkMax leaderMotor = new CANSparkMax(Constants.Pivot.leaderCANID, MotorType.kBrushless);
+    final CANSparkMax followerMotor = new CANSparkMax(Constants.Pivot.followerCANID, MotorType.kBrushless);
     private AbsoluteEncoder encoder;
     private SparkPIDController pidController;
     public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;

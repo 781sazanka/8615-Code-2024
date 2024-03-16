@@ -9,23 +9,23 @@ import frc.robot.subsystems.Pivot.Pivot;
 
 import java.util.function.Supplier;
 
-public class ArmExample extends Command {
-    private final Pivot Arm;
+public class PivotExample extends Command {
+    private final Pivot Pivot;
 
     private final double leftAxis;
     private final double rightAxis;
 
     public final boolean setSetpointEnabled = true;
 
-    public ArmExample(
+    public PivotExample(
             Pivot subsystem,
             Supplier<Double> leftAxisValue,
             Supplier<Double> rightAxisValue) {
 
-        Arm = subsystem;
+        Pivot = subsystem;
         leftAxis = leftAxisValue.get();
         rightAxis = leftAxisValue.get();
-        addRequirements(Arm);
+        addRequirements(Pivot);
     }
 
     // Called when the command is initially scheduled.
@@ -37,9 +37,9 @@ public class ArmExample extends Command {
     @Override
     public void execute() {
         if (rightAxis >= 0.0) {
-            Arm.up(rightAxis);
+            Pivot.up(rightAxis);
         } else if (leftAxis >= 0.0) {
-            Arm.down(leftAxis);
+            Pivot.down(leftAxis);
         }
     }
 

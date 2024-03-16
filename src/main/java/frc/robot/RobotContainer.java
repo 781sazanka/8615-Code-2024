@@ -18,7 +18,7 @@ import frc.robot.subsystems.Pivot.*;
 import frc.robot.subsystems.Shooter.Shooter;
 import frc.robot.Constants.CommandStatus;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.ArmExample;
+import frc.robot.commands.PivotExample;
 import frc.robot.commands.ClimbExample;
 import frc.robot.commands.DriveToSpeaker;
 import frc.robot.commands.ShootToSpeaker;
@@ -41,8 +41,8 @@ public class RobotContainer {
   private final CommandXboxController driveXbox = new CommandXboxController(Constants.Controller.driveXboxID);
   private final Shooter Shooter = new Shooter();
   private final Climb Climb = new Climb();
-  private final Pivot Arm = new Pivot();
-  private final Feeder Intake = new Feeder();
+  private final Pivot Pivot = new Pivot();
+  private final Feeder Feeder = new Feeder();
   private final Camera cam = new Camera();
 
   private final ShootToSpeaker shootToSpeaker = new ShootToSpeaker();
@@ -67,10 +67,10 @@ public class RobotContainer {
               () -> controllerXbox.x().getAsBoolean(), () -> controllerXbox.y().getAsBoolean()));
     }
 
-    if (CommandStatus.testArm) {
-      Arm.setDefaultCommand(
-          new ArmExample(Arm, () -> controllerXbox.getRawAxis(Constants.Controller.armXboxUpAxisId),
-              () -> controllerXbox.getRawAxis(Constants.Controller.armXboxDownAxisId)));
+    if (CommandStatus.testPivot) {
+      Pivot.setDefaultCommand(
+          new PivotExample(Pivot, () -> controllerXbox.getRawAxis(Constants.Controller.pivotXboxUpAxisId),
+              () -> controllerXbox.getRawAxis(Constants.Controller.pivotXboxDownAxisId)));
     }
 
     cam.cameraStream();
@@ -107,7 +107,7 @@ public class RobotContainer {
         () -> MathUtil.applyDeadband(-driveXbox.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
         () -> MathUtil.applyDeadband(-driveXbox.getLeftX(), OperatorConstants.LEFT_X_DEADBAND)));
 
-    controllerXbox.leftBumper().whileTrue(Intake.feed(0.2));
+    controllerXbox.leftBumper().whileTrue(Feeder.feed(0.2));
   }
 
   /**

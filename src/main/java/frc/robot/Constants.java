@@ -12,14 +12,14 @@ public final class Constants {
     public static final int driveXboxID = 1;
     public static final int shooterXboxLeftAxisId = 1;
     public static final int shooterXboxRightAxisId = 5;
-    public static final int armXboxUpAxisId = 2;
-    public static final int armXboxDownAxisId = 6;
+    public static final int pivotXboxUpAxisId = 2;
+    public static final int pivotXboxDownAxisId = 6;
   }
 
   public static class CommandStatus {
     public static final boolean testShooter = true;
     public static final boolean testClimb = true;
-    public static final boolean testArm = true;
+    public static final boolean testPivot = true;
   }
 
   public static final class AutonConstants {
@@ -62,7 +62,7 @@ public final class Constants {
     public static final int rotations = 15;
   }
 
-  public static class Arm {
+  public static class Pivot {
     public static final int leaderCANID = 7;
     public static final int followerCANID = 8;
 
@@ -70,7 +70,7 @@ public final class Constants {
     public static final int higherPosition = 25;
   }
 
-  public static class Intake {
+  public static class Feeder {
     public static final int leaderCANID = 40;
     public static final int followerCANID = 41;
   }

@@ -12,8 +12,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Feeder extends SubsystemBase {
-    VictorSPX leaderMotor = new VictorSPX(Constants.Intake.leaderCANID);
-    VictorSPX followerMotor = new VictorSPX(Constants.Intake.followerCANID);
+    VictorSPX leaderMotor = new VictorSPX(Constants.Feeder.leaderCANID);
+    VictorSPX followerMotor = new VictorSPX(Constants.Feeder.followerCANID);
 
     public Feeder() {
     }

@@ -3,7 +3,7 @@ package frc.robot.commands;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Shooter.Shooter;
-import frc.robot.util.LL;
+import frc.robot.subsystems.Vision.LL;
 
 public class ShootToSpeaker extends Command {
     private Shooter shooter;

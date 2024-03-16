@@ -16,6 +16,7 @@ import frc.robot.subsystems.Climb.Climb;
 import frc.robot.subsystems.Feeder.Feeder;
 import frc.robot.subsystems.Pivot.*;
 import frc.robot.subsystems.Shooter.Shooter;
+import frc.robot.subsystems.Vision.Camera;
 import frc.robot.Constants.CommandStatus;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.PivotExample;
@@ -24,7 +25,6 @@ import frc.robot.commands.DriveToSpeaker;
 import frc.robot.commands.ShootToSpeaker;
 import frc.robot.commands.ShooterExample;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
-import frc.robot.util.Camera;
 
 /**
  * This class is where the bulk of the robot should be declared. Since

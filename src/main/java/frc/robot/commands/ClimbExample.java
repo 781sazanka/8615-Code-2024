@@ -12,19 +12,19 @@ import java.util.function.Supplier;
 public class ClimbExample extends Command {
     private final Climb climb;
 
-    private final boolean isAButtonPressed;
-    private final boolean isBButtonPressed;
+    private final Supplier<Boolean> isUpButtonPressed;
+    private final Supplier<Boolean> isDownButtonPressed;
 
     public final boolean setSetpointEnabled = true;
 
     public ClimbExample(
             Climb subsystem,
-            Supplier<Boolean> AButton,
-            Supplier<Boolean> BButton) {
+            Supplier<Boolean> UpButton,
+            Supplier<Boolean> DownButton) {
 
         climb = subsystem;
-        isAButtonPressed = AButton.get();
-        isBButtonPressed = BButton.get();
+        isUpButtonPressed = UpButton;
+        isDownButtonPressed = DownButton;
 
         addRequirements(climb);
     }
@@ -37,12 +37,13 @@ public class ClimbExample extends Command {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        if (isAButtonPressed) {
-            climb.tighten();
-        } else if (isBButtonPressed) {
-            climb.loosen();
+        if (isUpButtonPressed.get()) {
+            climb.set(-0.2);
+        } else if (isDownButtonPressed.get()) {
+            climb.set(0.2);
         }
 
+        climb.putPosition();
     }
 
     // Called once the command ends or is interrupted.

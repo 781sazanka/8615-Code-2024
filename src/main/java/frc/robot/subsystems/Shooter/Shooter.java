@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems.Shooter;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.controls.*;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -20,6 +22,7 @@ public class Shooter extends SubsystemBase {
     final TalonFX motorLeader = new TalonFX(Constants.Shooter.topFalconMotorCANID, "rio");
     final TalonFX motorFollower = new TalonFX(Constants.Shooter.bottomFalconMotorCANID, "rio");
     final CANSparkMax sparkMaxMotor = new CANSparkMax(Constants.Shooter.sparkMaxCANID, MotorType.kBrushless);
+    VictorSPX redlineMotor = new VictorSPX(Constants.Feeder.motorCANID);
 
     final DigitalInput input = new DigitalInput(Constants.Shooter.photoSwitchSensorChannel);
 
@@ -27,45 +30,49 @@ public class Shooter extends SubsystemBase {
 
     public Shooter() {
         sparkMaxMotor.restoreFactoryDefaults();
-        talonFXConfig.kS = Constants.Shooter.kS; // Add 0.05 V output to overcome static friction
-        talonFXConfig.kV = Constants.Shooter.kV; // A velocity target of 1 rps results in 0.12 V output
-        talonFXConfig.kP = Constants.Shooter.kP; // An error of 1 rps results in 0.11 V output
-        talonFXConfig.kI = Constants.Shooter.kI; // no output for integrated error
-        talonFXConfig.kD = Constants.Shooter.kD; // no output for error derivative
-
-        SmartDashboard.putNumber("kS", talonFXConfig.kS);
-        SmartDashboard.putNumber("kV", talonFXConfig.kV);
-        SmartDashboard.putNumber("kP", talonFXConfig.kP);
-        SmartDashboard.putNumber("kI", talonFXConfig.kI);
-        SmartDashboard.putNumber("kD", talonFXConfig.kD);
-
         motorLeader.clearStickyFaults(0);
         motorFollower.clearStickyFaults(0);
 
-        talonFXConfig.kS = SmartDashboard.getNumber("kS", talonFXConfig.kS);
-        talonFXConfig.kV = SmartDashboard.getNumber("kV", talonFXConfig.kV);
-        talonFXConfig.kP = SmartDashboard.getNumber("kP", talonFXConfig.kP);
-        talonFXConfig.kI = SmartDashboard.getNumber("kI", talonFXConfig.kI);
-        talonFXConfig.kD = SmartDashboard.getNumber("kD", talonFXConfig.kD);
-        motorLeader.getConfigurator().apply(talonFXConfig);
-        motorFollower.getConfigurator().apply(talonFXConfig);
+        // in init function, set slot 0 gains
+        var slot0Configs = new Slot0Configs();
+        slot0Configs.kS = 0.05; // Add 0.05 V output to overcome static friction
+        slot0Configs.kV = 0.12; // A velocity target of 1 rps results in 0.12 V output
+        slot0Configs.kP = 0.11; // An error of 1 rps results in 0.11 V output
+        slot0Configs.kI = 0; // no output for integrated error
+        slot0Configs.kD = 0; // no output for error derivative
+
+        var slot1Configs = new Slot0Configs();
+        slot1Configs.kS = 0.05; // Add 0.05 V output to overcome static friction
+        slot1Configs.kV = 0.12; // A velocity target of 1 rps results in 0.12 V output
+        slot1Configs.kP = 0.11; // An error of 1 rps results in 0.11 V output
+        slot1Configs.kI = 0; // no output for integrated error
+        slot1Configs.kD = 0; // no output for error derivative
+
+        motorLeader.getConfigurator().apply(slot0Configs);
+        motorFollower.getConfigurator().apply(slot1Configs);
     }
 
-    public void setShooterSpeed(double output) {
+    public void runShooterMotor(double velocity) {
+        // create a velocity closed-loop request, voltage output, slot 0 configs
+        final VelocityVoltage m_request = new VelocityVoltage(0).withSlot(0);
 
-        motorLeader.setControl(new DutyCycleOut(output));
+        motorLeader.setControl(m_request.withVelocity(velocity).withFeedForward(0.5));
         motorFollower.setControl(new Follower(motorLeader.getDeviceID(), false));
-
-        SmartDashboard.putNumber("top motor speed", motorLeader.getMotorVoltage().getValueAsDouble());
-        SmartDashboard.putNumber("bottom motor speed", motorFollower.getMotorVoltage().getValueAsDouble());
     }
 
-    public void feed(double output) {
-        sparkMaxMotor.set(output);
+    public void runFeederMotor(double output) {
+        ControlMode mode = com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput;
+        redlineMotor.set(mode, output);
     }
 
     public Command shoot(double output) {
-        return startEnd(() -> setShooterSpeed(output), () -> setShooterSpeed(0));
+        return startEnd(() -> runShooterMotor(output), () -> runShooterMotor(0));
+    }
+
+    public void putData() {
+
+        SmartDashboard.putNumber("[Shooter] top motor speed", motorLeader.getVelocity().getValueAsDouble());
+        SmartDashboard.putNumber("[Shooter] bottom motor speed", motorFollower.getVelocity().getValueAsDouble());
     }
 
     @Override

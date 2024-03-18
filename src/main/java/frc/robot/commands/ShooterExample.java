@@ -11,11 +11,11 @@ import frc.robot.Constants;
 import frc.robot.subsystems.Shooter.Shooter;
 
 public class ShooterExample extends Command {
-    private final boolean isAButtonPressed;
-    private final boolean isBButtonPressed;
+    private final Supplier<Boolean> isAButtonPressed;
+    private final Supplier<Boolean> isBButtonPressed;
 
-    private final double leftAxis;
-    private final double rightAxis;
+    private final Supplier<Double> leftAxis;
+    private final Supplier<Double> rightAxis;
 
     private final Shooter shooter;
 
@@ -26,32 +26,36 @@ public class ShooterExample extends Command {
             Supplier<Boolean> AButton,
             Supplier<Boolean> BButton) {
         shooter = subsystem;
-        isAButtonPressed = AButton.get();
-        isBButtonPressed = BButton.get();
+        isAButtonPressed = AButton;
+        isBButtonPressed = BButton;
         // isXButtonPressed = XButton.get();
         // isYButtonPressed = YButton.get();
-        leftAxis = leftAxisValue.get();
-        rightAxis = rightAxisValue.get();
+        leftAxis = leftAxisValue;
+        rightAxis = rightAxisValue;
         addRequirements(shooter);
     }
 
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
+        shooter.putData();
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
+        if (leftAxis.get() >= 0.0) {
+            shooter.runFeederMotor(0.5);
+        } else if (rightAxis.get() >= 0.0) {
+            shooter.runShooterMotor(0.02);
+        } else if (isAButtonPressed.get()) {
+            // shooter.runShooterMotor(2);
 
-        if (leftAxis >= 0.0) {
-            shooter.feed(leftAxis * Constants.Shooter.falconSpeedMultiplier);
-        } else if (rightAxis >= 0.0) {
-            shooter.setShooterSpeed(rightAxis * Constants.Shooter.falconSpeedMultiplier);
-        } else if (isAButtonPressed) {
-            shooter.setShooterSpeed(Constants.Shooter.falconMotorLowOutput);
-        } else if (isBButtonPressed) {
-            shooter.setShooterSpeed(Constants.Shooter.falconMotorLowOutput);
+        } else if (isBButtonPressed.get()) {
+            // shooter.runShooterMotor(5);
+        } else {
+            shooter.runFeederMotor(0);
+            shooter.runShooterMotor(0);
         }
     }
 

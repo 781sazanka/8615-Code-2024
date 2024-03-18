@@ -6,47 +6,38 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Pivot.Pivot;
-
 import java.util.function.Supplier;
 
 public class PivotExample extends Command {
-    private final Pivot Pivot;
+    private final Pivot pivot;
 
-    private final double leftAxis;
-    private final double rightAxis;
-
-    public final boolean setSetpointEnabled = true;
+    private final Supplier<Double> leftAxis;
+    private final Supplier<Double> rightAxis;
 
     public PivotExample(
             Pivot subsystem,
             Supplier<Double> leftAxisValue,
             Supplier<Double> rightAxisValue) {
 
-        Pivot = subsystem;
-        leftAxis = leftAxisValue.get();
-        rightAxis = leftAxisValue.get();
-        addRequirements(Pivot);
+        pivot = subsystem;
+        leftAxis = leftAxisValue;
+        rightAxis = rightAxisValue;
+        addRequirements(pivot);
     }
 
     // Called when the command is initially scheduled.
-    @Override
-    public void initialize() {
-    }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        if (rightAxis >= 0.0) {
-            Pivot.up(rightAxis);
-        } else if (leftAxis >= 0.0) {
-            Pivot.down(leftAxis);
+        if (rightAxis.get() >= 0.0) {
+            pivot.setPosition(rightAxis.get() * 3 + pivot.currentPosition());
+        } else if (leftAxis.get() >= 0.0) {
+            pivot.setPosition(-1 * leftAxis.get() * 3 + pivot.currentPosition());
         }
     }
 
     // Called once the command ends or is interrupted.
-    @Override
-    public void end(boolean interrupted) {
-    }
 
     // Returns true when the command should end.
     @Override

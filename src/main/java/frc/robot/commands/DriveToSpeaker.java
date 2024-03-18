@@ -5,14 +5,13 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Vision.LL;
-import frc.robot.subsystems.swerve.SwerveSubsystem;
+import frc.robot.subsystems.Swerve.SwerveSubsystem;
 
 public class DriveToSpeaker extends Command {
     private SwerveSubsystem swerve;
-    private LL LL;
+    private LL ll;
     private DoubleSupplier translationX;
     private DoubleSupplier translationY;
-    private double heading;
 
     Logger logger = Logger.getLogger(getClass().getName());
 
@@ -27,8 +26,9 @@ public class DriveToSpeaker extends Command {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        if (LL.isTargetValid()) {
-            heading = -1 * LL.getTxAsDouble() / 70;
+        double heading;
+        if (ll.isTargetValid()) {
+            heading = -1 * ll.getTxAsDouble() / 70;
         } else {
             logger.info("Lost target!!");
             heading = 0;

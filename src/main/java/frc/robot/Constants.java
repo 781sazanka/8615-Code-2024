@@ -20,6 +20,7 @@ public final class Constants {
     public static final boolean testShooter = true;
     public static final boolean testClimb = true;
     public static final boolean testPivot = true;
+    public static final boolean testAutoPilot = false; // don't change it unless you're pretty sure what you're doing
   }
 
   public static final class AutonConstants {
@@ -52,8 +53,8 @@ public final class Constants {
   }
 
   public static class Climb {
-    public static final int leaderCANID = 5;
-    public static final int followerCANID = 6;
+    public static final int leaderCANID = 25;
+    public static final int followerCANID = 26;
 
     public static final double loosenSpeed = -0.3;
     public static final double tightenSpeed = 0.4;
@@ -71,7 +72,7 @@ public final class Constants {
   }
 
   public static class Feeder {
-    public static final int leaderCANID = 40;
+    public static final int motorCANID = 40;
     public static final int followerCANID = 41;
   }
 }

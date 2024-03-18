@@ -4,106 +4,35 @@
 
 package frc.robot.subsystems.Pivot;
 
-import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.SparkAbsoluteEncoder.Type;
-import com.revrobotics.SparkPIDController;
-import com.revrobotics.AbsoluteEncoder;
-import com.revrobotics.CANSparkMax;
+import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.hardware.TalonFX;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Pivot extends SubsystemBase {
 
-    final CANSparkMax leaderMotor = new CANSparkMax(Constants.Pivot.leaderCANID, MotorType.kBrushless);
-    final CANSparkMax followerMotor = new CANSparkMax(Constants.Pivot.followerCANID, MotorType.kBrushless);
-    private AbsoluteEncoder encoder;
-    private SparkPIDController pidController;
-    public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;
+    public final TalonFX motor1 = new TalonFX(Constants.Shooter.topFalconMotorCANID, "rio");
 
     public Pivot() {
-        encoder = leaderMotor.getAbsoluteEncoder(Type.kDutyCycle);
-        pidController = leaderMotor.getPIDController();
-        pidController.setFeedbackDevice(encoder);
+        var slot0Configs = new Slot0Configs();
+        slot0Configs.kP = 24; // An error of 0.5 rotations results in 12 V output
+        slot0Configs.kI = 0; // no output for integrated error
+        slot0Configs.kD = 0.1; // A velocity of 1 rps results in 0.1 V output
 
-        leaderMotor.restoreFactoryDefaults();
-        followerMotor.restoreFactoryDefaults();
-        followerMotor.follow(leaderMotor);
-
-        // PID parameters
-        kP = 0.1;
-        kI = 1e-4;
-        kD = 1;
-        kIz = 0;
-        kFF = 0;
-        kMaxOutput = 1;
-        kMinOutput = -1;
-
-        // set PID parameters
-        pidController.setP(kP);
-        pidController.setI(kI);
-        pidController.setD(kD);
-        pidController.setIZone(kIz);
-        pidController.setFF(kFF);
-        pidController.setOutputRange(kMinOutput, kMaxOutput);
-
-        // display PID coefficients on SmartDashboard
-        SmartDashboard.putNumber("P Gain", kP);
-        SmartDashboard.putNumber("I Gain", kI);
-        SmartDashboard.putNumber("D Gain", kD);
-        SmartDashboard.putNumber("I Zone", kIz);
-        SmartDashboard.putNumber("Feed Forward", kFF);
-        SmartDashboard.putNumber("Max Output", kMaxOutput);
-        SmartDashboard.putNumber("Min Output", kMinOutput);
+        motor1.getConfigurator().apply(slot0Configs);
     }
 
-    public void up(double speed) {
-        leaderMotor.set(speed);
+    public double currentPosition() {
+        double currentPosition = motor1.getPosition().getValueAsDouble();
+        SmartDashboard.putNumber("[Pivot] current position", currentPosition);
+        return currentPosition;
     }
 
-    public void down(double speed) {
-        leaderMotor.set(speed);
-    }
-
-    // foo() { foo(0, "undefined"); }
-    public void setSetpoint(int rotations) {
-        // read PID coefficients from SmartDashboard
-        double p = SmartDashboard.getNumber("P Gain", 0);
-        double i = SmartDashboard.getNumber("I Gain", 0);
-        double d = SmartDashboard.getNumber("D Gain", 0);
-        double iz = SmartDashboard.getNumber("I Zone", 0);
-        double ff = SmartDashboard.getNumber("Feed Forward", 0);
-        double max = SmartDashboard.getNumber("Max Output", 0);
-        double min = SmartDashboard.getNumber("Min Output", 0);
-
-        // if PID parameters on SmartDashboard have changed, write new values to
-        // controller
-        if ((p != kP)) {
-            pidController.setP(p);
-            kP = p;
-        }
-        if ((i != kI)) {
-            pidController.setI(i);
-            kI = i;
-        }
-        if ((d != kD)) {
-            pidController.setD(d);
-            kD = d;
-        }
-        if ((iz != kIz)) {
-            pidController.setIZone(iz);
-            kIz = iz;
-        }
-        if ((ff != kFF)) {
-            pidController.setFF(ff);
-            kFF = ff;
-        }
-        if ((max != kMaxOutput) || (min != kMinOutput)) {
-            pidController.setOutputRange(min, max);
-            kMinOutput = min;
-            kMaxOutput = max;
-        }
-
-        pidController.setReference(rotations, CANSparkMax.ControlType.kPosition);
+    public void setPosition(double newPosition) {
+        final PositionVoltage m_request = new PositionVoltage(0).withSlot(0);
+        motor1.setControl(m_request.withPosition(newPosition));
     }
 }

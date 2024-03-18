@@ -6,29 +6,30 @@ package frc.robot.subsystems.Climb;
 
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Climb extends SubsystemBase {
-
     final CANSparkMax leaderMotor = new CANSparkMax(Constants.Climb.leaderCANID, MotorType.kBrushless);
     final CANSparkMax followerMotor = new CANSparkMax(Constants.Climb.followerCANID, MotorType.kBrushless);
+    private RelativeEncoder leaderEncoder = leaderMotor.getEncoder();
+    private RelativeEncoder followerEencoder = followerMotor.getEncoder();
 
     public Climb() {
         leaderMotor.restoreFactoryDefaults();
         followerMotor.restoreFactoryDefaults();
-        followerMotor.follow(leaderMotor);
+        followerMotor.follow(leaderMotor, true);
     }
 
-    public void loosen() {
-        leaderMotor.set(Constants.Climb.keepCurrentPositionSpeed + Constants.Climb.loosenSpeed);
+    public void putPosition() {
+        SmartDashboard.putNumber("[Climb] follower position", followerEencoder.getPosition());
+        SmartDashboard.putNumber("[Climb] leader position", leaderEncoder.getPosition());
     }
 
-    public void tighten() {
-        leaderMotor.set(Constants.Climb.tightenSpeed);
-    }
-
-    public void setCurrent() {
-        leaderMotor.set(Constants.Climb.keepCurrentPositionSpeed);
+    public void set(double output) {
+        leaderMotor.set(output);
     }
 }

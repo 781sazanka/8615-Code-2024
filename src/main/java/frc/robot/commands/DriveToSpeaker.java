@@ -3,9 +3,11 @@ package frc.robot.commands;
 import java.util.logging.Logger;
 import java.util.function.DoubleSupplier;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Vision.LL;
-import frc.robot.subsystems.Swerve.SwerveSubsystem;
+import frc.robot.subsystems.Vision.LimelightHelpers;
+import frc.robot.subsystems.swerve.SwerveSubsystem;
 
 public class DriveToSpeaker extends Command {
     private SwerveSubsystem swerve;
@@ -21,6 +23,15 @@ public class DriveToSpeaker extends Command {
         this.translationY = translationY;
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(swerveSubsystem);
+    }
+
+    @Override
+    public void initialize() {
+        if (DriverStation.getAlliance().get() == DriverStation.Alliance.Blue) {
+            LimelightHelpers.setPriorityTagID("limelight", 7); // Set to aim at blue speaker
+        } else {
+            LimelightHelpers.setPriorityTagID("limelight", 4); // Set to aim at red speaker
+        }
     }
 
     // Called every time the scheduler runs while the command is scheduled.

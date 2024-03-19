@@ -12,7 +12,7 @@ public class ShootToSpeaker extends Command {
 
     public void Shoot() {
         addRequirements(shooter);
-        shooter.shoot(interpolatedOutput(LL.getDistance()));
+        // shooter.shoot(interpolatedOutput(LL.getDistance()));
     }
 
     public double interpolatedOutput(double distance) {

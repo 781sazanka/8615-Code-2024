@@ -7,7 +7,6 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 
 import java.util.function.Supplier;
-import frc.robot.Constants;
 import frc.robot.subsystems.Shooter.Shooter;
 
 public class ShooterExample extends Command {
@@ -38,24 +37,24 @@ public class ShooterExample extends Command {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        shooter.putData();
+
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        if (leftAxis.get() >= 0.0) {
-            shooter.runFeederMotor(0.5);
-        } else if (rightAxis.get() >= 0.0) {
-            shooter.runShooterMotor(0.02);
+        shooter.putData();
+        if (leftAxis.get() >= 0.1) {
+        } else if (rightAxis.get() >= 0.1) {
+            shooter.runShooterMotor(rightAxis.get() * 20);
         } else if (isAButtonPressed.get()) {
-            // shooter.runShooterMotor(2);
-
+            // run feeder
+            shooter.runFeederMotor(0.2);
         } else if (isBButtonPressed.get()) {
-            // shooter.runShooterMotor(5);
+            // run shooter at very low speed
+            shooter.runShooterMotor(1);
         } else {
-            shooter.runFeederMotor(0);
-            shooter.runShooterMotor(0);
+            shooter.stop();
         }
     }
 

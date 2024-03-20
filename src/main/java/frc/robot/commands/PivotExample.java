@@ -31,6 +31,7 @@ public class PivotExample extends Command {
         // isYButtonPressed = YButton.get();
         leftAxis = leftAxisValue;
         rightAxis = rightAxisValue;
+
         addRequirements(pivot);
     }
 
@@ -42,14 +43,17 @@ public class PivotExample extends Command {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
+        double position = -100000;
 
         pivot.putData();
-        System.out.println(pivot.currentPosition());
         if (leftAxis.get() >= 0.1) {
-            pivot.setPosition(-1 * 0.15 + pivot.currentPosition());
+            pivot.runMootr(0.2);
+            position = pivot.currentPosition();
+            // currentPosition = pivot.currentPosition();
         } else if (leftAxis.get() <= -0.1) {
-            pivot.setPosition(0.15 + pivot.currentPosition());
-
+            pivot.runMootr(-0.2);
+            position = pivot.currentPosition();
+            // currentPosition = pivot.currentPosition();
         } else if (rightAxis.get() >= 0.1) {
         } else if (isAButtonPressed.get()) {
             // emergency stop button
@@ -57,7 +61,8 @@ public class PivotExample extends Command {
 
         } else if (isBButtonPressed.get()) {
         } else {
-            pivot.setPosition(pivot.currentPosition());
+            // pivot.setPosition(pivot.currentPosition());
+            pivot.stop();
         }
 
     }

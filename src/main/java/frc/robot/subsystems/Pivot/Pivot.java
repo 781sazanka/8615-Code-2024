@@ -52,6 +52,10 @@ public class Pivot extends SubsystemBase {
         // motorFollower.setControl(new Follower(motorLeader.getDeviceID(), true));
     }
 
+    public void runMootr(double output) {
+        motorLeader.set(output);
+    }
+
     public double currentPosition() {
         return motorLeader.getPosition().getValueAsDouble();
     }

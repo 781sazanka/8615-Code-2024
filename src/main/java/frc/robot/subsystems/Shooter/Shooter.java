@@ -17,13 +17,13 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Shooter extends SubsystemBase {
 
-    final TalonFX motorLeader = new TalonFX(30, "rio");
-    final TalonFX motorFollower = new TalonFX(31, "rio");
+    final TalonFX motorLeader = new TalonFX(1, "rio");
+    final TalonFX motorFollower = new TalonFX(4, "rio");
     // VictorSPX redlineMotor = new VictorSPX(40);
-    CANSparkMax sparkmaxMotor = new CANSparkMax(0, MotorType.kBrushless);
+    // CANSparkMax sparkmaxMotor = new CANSparkMax(0, MotorType.kBrushless);
 
     public Shooter() {
-        sparkmaxMotor.restoreFactoryDefaults();
+        // sparkmaxMotor.restoreFactoryDefaults();
         motorLeader.clearStickyFaults(0);
         motorFollower.clearStickyFaults(0);
 
@@ -47,7 +47,7 @@ public class Shooter extends SubsystemBase {
     }
 
     public void runFeederMotor(double output) {
-        sparkmaxMotor.set(output);
+        // sparkmaxMotor.set(output);
     }
 
     public void putData() {

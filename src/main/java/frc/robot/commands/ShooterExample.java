@@ -4,10 +4,15 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
 import java.util.function.Supplier;
 import frc.robot.subsystems.Shooter.Shooter;
+import frc.robot.subsystems.Vision.LL;
 
 public class ShooterExample extends Command {
     private final Supplier<Boolean> isAButtonPressed;
@@ -16,7 +21,9 @@ public class ShooterExample extends Command {
     private final Supplier<Double> leftAxis;
     private final Supplier<Double> rightAxis;
 
+    // private LL ll = new LL();
     private final Shooter shooter;
+    NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
 
     public ShooterExample(
             Shooter subsystem,
@@ -42,8 +49,20 @@ public class ShooterExample extends Command {
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
+
     public void execute() {
         shooter.putData();
+        NetworkTableEntry ty = table.getEntry("ty");
+        double targetOffsetAngle_Vertical = ty.getDouble(0.0);
+        double limelightMountAngleDegrees = 25.0;
+        double limelightLensHeightInches = 20.0;
+        double goalHeightInches = 60.0;
+        double angleToGoalDegrees = limelightMountAngleDegrees + targetOffsetAngle_Vertical;
+        double angleToGoalRadians = angleToGoalDegrees * (3.14159 / 180.0);
+        double distanceFromLimelightToGoalInches = (goalHeightInches - limelightLensHeightInches)
+                / Math.tan(angleToGoalRadians);
+
+        SmartDashboard.putNumber("distance", distanceFromLimelightToGoalInches);
         if (leftAxis.get() >= 0.1) {
         } else if (rightAxis.get() >= 0.1) {
             shooter.runShooterMotor(rightAxis.get() * 20);

@@ -39,6 +39,7 @@ public class DriveToSpeaker extends Command {
     @Override
     public void execute() {
         double headingVelocity;
+        System.out.println("right bumper pressed");
         SmartDashboard.putBoolean("valid target", ll.isTargetValid());
         if (ll.isTargetValid()) {
             headingVelocity = -1 * ll.getTxAsDouble() / 70;

@@ -63,6 +63,7 @@ public class ShooterExample extends Command {
                 / Math.tan(angleToGoalRadians);
 
         SmartDashboard.putNumber("distance", distanceFromLimelightToGoalInches);
+        SmartDashboard.putNumber("valid target", table.getEntry("tv").getInteger(0));
         if (leftAxis.get() >= 0.1) {
         } else if (rightAxis.get() >= 0.1) {
             shooter.runShooterMotor(rightAxis.get() * 20);

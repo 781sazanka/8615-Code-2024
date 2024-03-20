@@ -12,8 +12,10 @@ import com.ctre.phoenix6.controls.*;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -25,9 +27,12 @@ public class Pivot extends SubsystemBase {
     final TalonFX motorFollower = new TalonFX(31, "rio");
     // final CANSparkMax sparkMaxMotor = new
     // CANSparkMax(Constants.Pivot.sparkMaxCANID, MotorType.kBrushless);
-    VictorSPX redlineMotor = new VictorSPX(Constants.Feeder.motorCANID);
+    final DutyCycleEncoder dutyCycleEncoder;
 
     public Pivot() {
+        int dioChannel = 1;
+        dutyCycleEncoder = new DutyCycleEncoder(dioChannel);
+
         // sparkMaxMotor.restoreFactoryDefaults();
         motorLeader.clearStickyFaults(0);
         motorFollower.clearStickyFaults(0);
@@ -66,6 +71,8 @@ public class Pivot extends SubsystemBase {
 
         SmartDashboard.putNumber("[Pivot] top motor position", motorLeader.getPosition().getValueAsDouble());
         SmartDashboard.putNumber("[Pivot] bottom motor position", motorFollower.getVelocity().getValueAsDouble());
+
+        SmartDashboard.putNumber("[Pivot] encoder value", dutyCycleEncoder.getAbsolutePosition());
     }
 
     public void stop() {

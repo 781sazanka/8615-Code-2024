@@ -36,8 +36,8 @@ import frc.robot.subsystems.swerve.SwerveSubsystem;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-        // private final SwerveSubsystem drivebase = new SwerveSubsystem(
-        // new File(Filesystem.getDeployDirectory(), "swerve"));
+        private final SwerveSubsystem drivebase = new SwerveSubsystem(
+                        new File(Filesystem.getDeployDirectory(), "swerve"));
         private final CommandJoystick debugJoystick = new CommandJoystick(3);
         private final CommandXboxController controllerXbox = new CommandXboxController(
                         Constants.Controller.controllerXboxID);
@@ -82,14 +82,14 @@ public class RobotContainer {
 
                 cam.cameraStream();
 
-                // Command driveFieldOrientedDirectAngle = drivebase.driveCommand(
-                // () -> MathUtil.applyDeadband(driveXbox.getLeftY(),
-                // OperatorConstants.LEFT_Y_DEADBAND),
-                // () -> MathUtil.applyDeadband(driveXbox.getLeftX(),
-                // OperatorConstants.LEFT_X_DEADBAND),
-                // driveXbox::getRightX,
-                // driveXbox::getRightY);
-                // drivebase.setDefaultCommand(driveFieldOrientedDirectAngle);
+                Command driveFieldOrientedDirectAngle = drivebase.driveCommand(
+                                () -> MathUtil.applyDeadband(-1 * driveXbox.getLeftY(),
+                                                OperatorConstants.LEFT_Y_DEADBAND),
+                                () -> MathUtil.applyDeadband(-1 * driveXbox.getLeftX(),
+                                                OperatorConstants.LEFT_X_DEADBAND),
+                                () -> -1 * driveXbox.getRightX(),
+                                () -> -1 * driveXbox.getRightY());
+                drivebase.setDefaultCommand(driveFieldOrientedDirectAngle);
 
                 configureBindings();
         }
@@ -109,14 +109,11 @@ public class RobotContainer {
          * joysticks}.
          */
         private void configureBindings() {
-                // if (Constants.CommandStatus.testAutoPilot) {
-                // driveXbox.leftBumper().onTrue(Commands.runOnce(shootToSpeaker::Shoot));
-                // driveXbox.rightBumper().whileTrue(new DriveToSpeaker(drivebase,
-                // () -> MathUtil.applyDeadband(-driveXbox.getLeftY(),
-                // OperatorConstants.LEFT_Y_DEADBAND),
-                // () -> MathUtil.applyDeadband(-driveXbox.getLeftX(),
-                // OperatorConstants.LEFT_X_DEADBAND)));
-                // }
+                driveXbox.rightBumper().whileTrue(new DriveToSpeaker(drivebase,
+                                () -> MathUtil.applyDeadband(-1 * driveXbox.getLeftY(),
+                                                OperatorConstants.LEFT_Y_DEADBAND),
+                                () -> MathUtil.applyDeadband(-1 * driveXbox.getLeftX(),
+                                                OperatorConstants.LEFT_X_DEADBAND)));
         }
 
         /**

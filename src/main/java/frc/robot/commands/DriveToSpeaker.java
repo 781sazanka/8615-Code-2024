@@ -4,6 +4,7 @@ import java.util.logging.Logger;
 import java.util.function.DoubleSupplier;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Vision.LL;
 import frc.robot.subsystems.Vision.LimelightHelpers;
@@ -37,19 +38,23 @@ public class DriveToSpeaker extends Command {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        double heading;
+        double headingVelocity;
+        SmartDashboard.putBoolean("valid target", ll.isTargetValid());
         if (ll.isTargetValid()) {
-            heading = -1 * ll.getTxAsDouble() / 70;
+            headingVelocity = -1 * ll.getTxAsDouble() / 70;
         } else {
             logger.info("Lost target!!");
-            heading = 0;
+            headingVelocity = 0;
         }
+        SmartDashboard.putNumber("heading velocity", headingVelocity);
 
-        swerve.swerveDrive.drive(
-                new Translation2d(Math.pow(translationX.getAsDouble(), 3) * swerve.swerveDrive.getMaximumVelocity(),
-                        Math.pow(translationY.getAsDouble(), 3) * swerve.swerveDrive.getMaximumVelocity()),
-                heading * swerve.swerveDrive.getMaximumAngularVelocity(),
-                true,
-                false);
+        // swerve.swerveDrive.drive(
+        // new Translation2d(Math.pow(translationX.getAsDouble(), 3) *
+        // swerve.swerveDrive.getMaximumVelocity(),
+        // Math.pow(translationY.getAsDouble(), 3) *
+        // swerve.swerveDrive.getMaximumVelocity()),
+        // headingVelocity * swerve.swerveDrive.getMaximumAngularVelocity(),
+        // true,
+        // false);
     }
 }

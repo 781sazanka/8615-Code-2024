@@ -2,9 +2,15 @@ package frc.robot.subsystems.swerve;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.ReplanningConfig;
+
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.estimator.PoseEstimator;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
@@ -13,7 +19,10 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.AutonConstants;
+import frc.robot.subsystems.Vision.LimelightHelpers;
+
 import java.io.File;
+import java.util.Optional;
 import java.util.function.DoubleSupplier;
 import swervelib.SwerveDrive;
 import swervelib.math.SwerveMath;
@@ -27,11 +36,11 @@ public class SwerveSubsystem extends SubsystemBase {
 
   /** Swerve drive object. */
   public final SwerveDrive swerveDrive;
-
   /**
    * Maximum speed of the robot in meters per second, used to limit acceleration.
    */
   public double maximumSpeed = Units.feetToMeters(14.5);
+  SwerveDrivePoseEstimator poseEstimator;
 
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
@@ -64,6 +73,10 @@ public class SwerveSubsystem extends SubsystemBase {
     }
     setupPathPlanner();
     swerveDrive.setHeadingCorrection(false);
+    poseEstimator = new SwerveDrivePoseEstimator(swerveDrive.kinematics,
+        swerveDrive.getOdometryHeading(),
+        swerveDrive.getModulePositions(),
+        new Pose2d(0, 0, swerveDrive.getYaw()), VecBuilder.fill(0.1, 0.1, 10), VecBuilder.fill(5, 5, 500));
   }
 
   public SwerveSubsystem(
@@ -124,14 +137,12 @@ public class SwerveSubsystem extends SubsystemBase {
           double xInput = Math.pow(translationX.getAsDouble(), 3); // Smooth controll out
           double yInput = Math.pow(translationY.getAsDouble(), 3); // Smooth controll out
           // Make the robot move
-          driveFieldOriented(
-              swerveDrive.swerveController.getTargetSpeeds(
-                  xInput,
-                  yInput,
-                  headingX.getAsDouble(),
-                  headingY.getAsDouble(),
-                  swerveDrive.getOdometryHeading().getRadians(),
-                  swerveDrive.getMaximumVelocity()));
+          driveFieldOriented(swerveDrive.swerveController.getTargetSpeeds(xInput, yInput,
+              headingX.getAsDouble(),
+              headingY.getAsDouble(),
+              swerveDrive.getOdometryHeading().getRadians(),
+              swerveDrive.getMaximumVelocity()));
+
         });
   }
 
@@ -152,19 +163,29 @@ public class SwerveSubsystem extends SubsystemBase {
         });
   }
 
-  public Command driveCommand(
-      DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier angularRotationX) {
-    return run(
-        () -> {
-          // Make the robot move
-          swerveDrive.drive(
-              new Translation2d(
-                  Math.pow(translationX.getAsDouble(), 3) * swerveDrive.getMaximumVelocity(),
-                  Math.pow(translationY.getAsDouble(), 3) * swerveDrive.getMaximumVelocity()),
-              Math.pow(angularRotationX.getAsDouble(), 3) * swerveDrive.getMaximumAngularVelocity(),
-              true,
-              false);
-        });
+  public ChassisSpeeds getTargetSpeeds(double xInput, double yInput, double headingX, double headingY) {
+    xInput = Math.pow(xInput, 3);
+    yInput = Math.pow(yInput, 3);
+    return swerveDrive.swerveController.getTargetSpeeds(xInput,
+        yInput,
+        headingX,
+        headingY,
+        getHeading().getRadians(),
+        maximumSpeed);
+  }
+
+  public ChassisSpeeds getTargetSpeeds(double xInput, double yInput, Rotation2d angle) {
+    xInput = Math.pow(xInput, 3);
+    yInput = Math.pow(yInput, 3);
+    return swerveDrive.swerveController.getTargetSpeeds(xInput,
+        yInput,
+        angle.getRadians(),
+        getHeading().getRadians(),
+        maximumSpeed);
+  }
+
+  public Rotation2d getHeading() {
+    return getPose().getRotation();
   }
 
   /**
@@ -200,7 +221,7 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   public Pose2d getPose() {
-    return swerveDrive.getPose();
+    return poseEstimator.getEstimatedPosition();
   }
 
   public void setChassisSpeeds(ChassisSpeeds chassisSpeeds) {
@@ -226,6 +247,12 @@ public class SwerveSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+
+    poseEstimator.addVisionMeasurement(LimelightHelpers.getBotPose2d("limelight"),
+        edu.wpi.first.wpilibj.Timer.getFPGATimestamp());
+
+    poseEstimator.update(
+        swerveDrive.getOdometryHeading(), swerveDrive.getModulePositions());
   }
 
   @Override
@@ -240,4 +267,28 @@ public class SwerveSubsystem extends SubsystemBase {
     swerveDrive.driveFieldOriented(velocity);
   }
 
+  public Command driveToPose(Pose2d pose) {
+    // Create the constraints to use while pathfinding
+    PathConstraints constraints = new PathConstraints(
+        swerveDrive.getMaximumVelocity(), 4.0,
+        swerveDrive.getMaximumAngularVelocity(), Units.degreesToRadians(720));
+
+    // Since AutoBuilder is configured, we can use it to build pathfinding commands
+    return AutoBuilder.pathfindToPose(
+        pose,
+        constraints,
+        0.0, // Goal end velocity in meters/sec
+        0.0 // Rotation delay distance in meters. This is how far the robot should travel
+            // before attempting to rotate.
+    );
+  }
+
+  public Command aimAtTarget(LimelightHelpers limelight) {
+    double rotation = LimelightHelpers.getBotPose2d("limelight").getRotation().getDegrees();
+    return run(() -> {
+      drive(getTargetSpeeds(0,
+          0,
+          Rotation2d.fromDegrees(rotation)));
+    });
+  }
 }

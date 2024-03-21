@@ -61,8 +61,9 @@ public class ShooterExample extends Command {
         double angleToGoalRadians = angleToGoalDegrees * (3.14159 / 180.0);
         double distanceFromLimelightToGoalInches = (goalHeightInches - limelightLensHeightInches)
                 / Math.tan(angleToGoalRadians);
-
-        SmartDashboard.putNumber("distance", distanceFromLimelightToGoalInches);
+        SmartDashboard.putNumber("[LL] tx", table.getEntry("tx").getDouble(0.0));
+        SmartDashboard.putNumber("[LL] ty", table.getEntry("ty").getDouble(0.0));
+        SmartDashboard.putNumber("[LL] distance", distanceFromLimelightToGoalInches);
         SmartDashboard.putNumber("valid target", table.getEntry("tv").getInteger(0));
         if (leftAxis.get() >= 0.1) {
         } else if (rightAxis.get() >= 0.1) {

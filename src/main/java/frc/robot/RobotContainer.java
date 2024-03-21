@@ -56,13 +56,6 @@ public class RobotContainer {
          * The container for the robot. Contains subsystems, OI devices, and commands.
          */
         public RobotContainer() {
-                // Shooter.setDefaultCommand(
-                // new ShooterExample(Shooter, // () ->
-                // // controllerXbox.getRawAxis(Constants.Controller.shooterXboxLeftAxisId),
-                // // () ->
-                // controllerXbox.getRawAxis(Constants.Controller.shooterXboxRightAxisId),
-                // () -> debugJoystick.getRawAxis(0), () -> debugJoystick.getRawAxis(1),
-                // () -> debugJoystick.getRawButton(1), () -> controllerXbox.getBButton()));
                 Shooter.setDefaultCommand(
                                 new ShooterExample(Shooter, () -> controllerXbox.getRawAxis(0),
                                                 () -> controllerXbox.getRawAxis(1),
@@ -74,11 +67,11 @@ public class RobotContainer {
                 // () -> controllerXbox.x().getAsBoolean(),
                 // () -> controllerXbox.y().getAsBoolean()));
 
-                // Pivot.setDefaultCommand(
-                // new PivotExample(Pivot, () -> controllerXbox.getRawAxis(0),
-                // () -> controllerXbox.getRawAxis(1),
-                // () -> controllerXbox.a().getAsBoolean(),
-                // () -> controllerXbox.button(101).getAsBoolean()));
+                Pivot.setDefaultCommand(
+                                new PivotExample(Pivot, () -> controllerXbox.getRawAxis(0),
+                                                () -> controllerXbox.getRawAxis(1),
+                                                () -> controllerXbox.a().getAsBoolean(),
+                                                () -> controllerXbox.button(101).getAsBoolean()));
 
                 cam.cameraStream();
 

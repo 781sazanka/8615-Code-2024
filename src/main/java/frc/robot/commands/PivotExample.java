@@ -4,10 +4,12 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
 import java.util.function.Supplier;
 import frc.robot.subsystems.Pivot.Pivot;
+import frc.robot.subsystems.Vision.LimelightHelpers;
 
 public class PivotExample extends Command {
     private final Supplier<Boolean> isAButtonPressed;
@@ -46,12 +48,13 @@ public class PivotExample extends Command {
         double position = -100000;
 
         pivot.putData();
+
         if (leftAxis.get() >= 0.1) {
-            pivot.runMootr(0.2);
+            pivot.runMootr(leftAxis.get() * 0.5);
             position = pivot.currentPosition();
             // currentPosition = pivot.currentPosition();
         } else if (leftAxis.get() <= -0.1) {
-            pivot.runMootr(-0.2);
+            pivot.runMootr(leftAxis.get() * 0.5);
             position = pivot.currentPosition();
             // currentPosition = pivot.currentPosition();
         } else if (rightAxis.get() >= 0.1) {
@@ -65,6 +68,8 @@ public class PivotExample extends Command {
             pivot.stop();
         }
 
+        SmartDashboard.putNumber("[Pivot] tx", LimelightHelpers.getTX("limelight"));
+        SmartDashboard.putNumber("[Pivot] ty", LimelightHelpers.getTY("limelight"));
     }
 
     // Called once the command ends or is interrupted.

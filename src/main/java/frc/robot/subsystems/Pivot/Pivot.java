@@ -24,13 +24,13 @@ import frc.robot.Constants;
 public class Pivot extends SubsystemBase {
 
     final TalonFX motorLeader = new TalonFX(30, "rio");
-    final TalonFX motorFollower = new TalonFX(31, "rio");
+    final TalonFX motorFollower = new TalonFX(32, "rio");
     // final CANSparkMax sparkMaxMotor = new
     // CANSparkMax(Constants.Pivot.sparkMaxCANID, MotorType.kBrushless);
     final DutyCycleEncoder dutyCycleEncoder;
 
     public Pivot() {
-        int dioChannel = 1;
+        int dioChannel = 0;
         dutyCycleEncoder = new DutyCycleEncoder(dioChannel);
 
         // sparkMaxMotor.restoreFactoryDefaults();
@@ -58,7 +58,8 @@ public class Pivot extends SubsystemBase {
     }
 
     public void runMootr(double output) {
-        motorLeader.set(output);
+        motorFollower.setControl(new DutyCycleOut(output));
+        // motorFollower.setControl(new Follower(motorLeader.getDeviceID(), true));
     }
 
     public double currentPosition() {

@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems.Shooter;
 
+import java.util.function.DoubleSupplier;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.ctre.phoenix6.configs.Slot0Configs;
@@ -12,6 +14,8 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -19,11 +23,17 @@ public class Shooter extends SubsystemBase {
 
     final TalonFX motorLeader = new TalonFX(1, "rio");
     final TalonFX motorFollower = new TalonFX(4, "rio");
+
     // VictorSPX redlineMotor = new VictorSPX(40);
-    // CANSparkMax sparkmaxMotor = new CANSparkMax(0, MotorType.kBrushless);
+    CANSparkMax sparkMaxFeederMotor = new CANSparkMax(0, MotorType.kBrushless);
+    CANSparkMax sparkMaxIntakeMotor1 = new CANSparkMax(0, MotorType.kBrushless);
+    CANSparkMax sparkMaxIntakeMotor2 = new CANSparkMax(0, MotorType.kBrushless);
 
     public Shooter() {
-        // sparkmaxMotor.restoreFactoryDefaults();
+        sparkMaxFeederMotor.restoreFactoryDefaults();
+        sparkMaxIntakeMotor1.restoreFactoryDefaults();
+        sparkMaxIntakeMotor2.restoreFactoryDefaults();
+
         motorLeader.clearStickyFaults(0);
         motorFollower.clearStickyFaults(0);
 
@@ -47,7 +57,12 @@ public class Shooter extends SubsystemBase {
     }
 
     public void runFeederMotor(double output) {
-        // sparkmaxMotor.set(output);
+        sparkMaxFeederMotor.set(output);
+    }
+
+    public void runIntakeMotor(double output) {
+        sparkMaxIntakeMotor1.set(output);
+        sparkMaxIntakeMotor2.set(output);
     }
 
     public void putData() {
@@ -59,10 +74,12 @@ public class Shooter extends SubsystemBase {
         motorLeader.stopMotor();
         motorFollower.stopMotor();
         runFeederMotor(0);
+        runIntakeMotor(0);
         // sparkMaxMotor.stopMotor();
     }
 
     @Override
     public void periodic() {
+        putData();
     }
 }

@@ -73,7 +73,7 @@ public class Pivot extends SubsystemBase {
         SmartDashboard.putNumber("[Pivot] top motor position", motorLeader.getPosition().getValueAsDouble());
         SmartDashboard.putNumber("[Pivot] bottom motor position", motorFollower.getVelocity().getValueAsDouble());
 
-        SmartDashboard.putNumber("[Pivot] encoder value", dutyCycleEncoder.getAbsolutePosition());
+        SmartDashboard.putNumber("[Pivot] encoder", dutyCycleEncoder.getAbsolutePosition());
     }
 
     public void stop() {
@@ -84,8 +84,6 @@ public class Pivot extends SubsystemBase {
 
     @Override
     public void periodic() {
-        motorLeader.stopMotor();
-        motorFollower.stopMotor();
-        // sparkMaxMotor.stopMotor();
+        putData();
     }
 }

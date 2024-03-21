@@ -6,13 +6,13 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Vision.LL;
+import frc.robot.subsystems.Vision.Vision;
 import frc.robot.subsystems.Vision.LimelightHelpers;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 
 public class DriveToSpeaker extends Command {
     private SwerveSubsystem swerve;
-    private LL ll;
+    private Vision ll;
     private DoubleSupplier translationX;
     private DoubleSupplier translationY;
 

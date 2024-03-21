@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.AutonConstants;
 import frc.robot.subsystems.Vision.LimelightHelpers;
+import frc.robot.subsystems.Vision.Vision;
 
 import java.io.File;
 import java.util.Optional;
@@ -42,6 +43,8 @@ public class SwerveSubsystem extends SubsystemBase {
    */
   public double maximumSpeed = Units.feetToMeters(14.5);
   SwerveDrivePoseEstimator poseEstimator;
+
+  Vision vision = new Vision();
 
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
@@ -74,15 +77,18 @@ public class SwerveSubsystem extends SubsystemBase {
     }
     setupPathPlanner();
     swerveDrive.setHeadingCorrection(false);
-    poseEstimator = new SwerveDrivePoseEstimator(swerveDrive.kinematics,
-        swerveDrive.getOdometryHeading(),
+    poseEstimator = new SwerveDrivePoseEstimator(
+        swerveDrive.kinematics,
+        getHeading(),
         swerveDrive.getModulePositions(),
-        new Pose2d(0, 0, swerveDrive.getYaw()), VecBuilder.fill(0.1, 0.1, 10), VecBuilder.fill(5, 5, 500));
+        new Pose2d(0, 0, new Rotation2d(0)));
+
   }
 
   public SwerveSubsystem(
       SwerveDriveConfiguration driveCfg, SwerveControllerConfiguration controllerCfg) {
     swerveDrive = new SwerveDrive(driveCfg, controllerCfg, maximumSpeed);
+
   }
 
   /** Setup AutoBuilder for PathPlanner. */
@@ -249,15 +255,21 @@ public class SwerveSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
 
-    poseEstimator.addVisionMeasurement(LimelightHelpers.getBotPose2d("limelight"),
-        edu.wpi.first.wpilibj.Timer.getFPGATimestamp());
+    // poseEstimator.addVisionMeasurement(LimelightHelpers.getBotPose2d("limelight"),
+    // edu.wpi.first.wpilibj.Timer.getFPGATimestamp());
 
-    poseEstimator.update(
-        swerveDrive.getOdometryHeading(), swerveDrive.getModulePositions());
+    // poseEstimator.update(
+    // swerveDrive.getOdometryHeading(), swerveDrive.getModulePositions());
 
-    SmartDashboard.putNumber("[Swerve] rotation in degrees", swerveDrive.getPose().getRotation().getDegrees());
-    SmartDashboard.putNumber("[Swerve] rotation in degrees from vision",
-        LimelightHelpers.getBotPose2d("limelight").getRotation().getDegrees());
+    // SmartDashboard.putNumber("[Swerve] rotation in degrees",
+    // swerveDrive.getPose().getRotation().getDegrees());
+    // SmartDashboard.putNumber("[Swerve] rotation in degrees from vision",
+    // LimelightHelpers.getBotPose2d("limelight").getRotation().getDegrees());
+    poseEstimator.update(getHeading(), swerveDrive.getModulePositions());
+    if (vision.getTV()) {
+      poseEstimator.addVisionMeasurement(vision.getEstimatedRoboPose(), vision.getTimestamp(),
+          vision.getStandardDeviations());
+    }
   }
 
   @Override

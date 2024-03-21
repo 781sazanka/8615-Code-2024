@@ -3,11 +3,11 @@ package frc.robot.commands;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Shooter.Shooter;
-import frc.robot.subsystems.Vision.LL;
+import frc.robot.subsystems.Vision.Vision;
 
 public class ShootToSpeaker extends Command {
     private Shooter shooter;
-    private LL LL;
+    private Vision LL;
     InterpolatingDoubleTreeMap dataMap = new InterpolatingDoubleTreeMap();
 
     public void Shoot() {

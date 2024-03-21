@@ -32,6 +32,7 @@ public class ClimbExample extends Command {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
+        // climb.moveToTheLowest();
     }
 
     // Called every time the scheduler runs while the command is scheduled.

@@ -18,7 +18,7 @@ import frc.robot.subsystems.Climb.Climb;
 import frc.robot.subsystems.Pivot.*;
 import frc.robot.subsystems.Shooter.Shooter;
 import frc.robot.subsystems.Vision.Camera;
-import frc.robot.subsystems.Vision.LL;
+import frc.robot.subsystems.Vision.Vision;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.ClimbExample;
 import frc.robot.commands.DriveToSpeaker;

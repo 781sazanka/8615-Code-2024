@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 
 import java.util.function.Supplier;
 import frc.robot.subsystems.Shooter.Shooter;
-import frc.robot.subsystems.Vision.LL;
+import frc.robot.subsystems.Vision.Vision;
 
 public class ShooterExample extends Command {
     private final Supplier<Boolean> isAButtonPressed;

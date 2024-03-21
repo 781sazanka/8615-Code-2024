@@ -9,10 +9,13 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Climb extends SubsystemBase {
+
     final CANSparkMax leaderMotor = new CANSparkMax(Constants.Climb.leaderCANID, MotorType.kBrushless);
     final CANSparkMax followerMotor = new CANSparkMax(Constants.Climb.followerCANID, MotorType.kBrushless);
     private RelativeEncoder leaderEncoder = leaderMotor.getEncoder();
@@ -31,5 +34,14 @@ public class Climb extends SubsystemBase {
 
     public void set(double output) {
         leaderMotor.set(output);
+    }
+
+    @Override
+    public void periodic() {
+        putPosition();
+    }
+
+    public Command moveToTheLowest() {
+        return run(() -> set(0.2)).withTimeout(2);
     }
 }

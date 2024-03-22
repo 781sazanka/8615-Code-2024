@@ -79,10 +79,9 @@ public class SwerveSubsystem extends SubsystemBase {
     swerveDrive.setHeadingCorrection(false);
     poseEstimator = new SwerveDrivePoseEstimator(
         swerveDrive.kinematics,
-        getHeading(),
+        swerveDrive.getOdometryHeading(),
         swerveDrive.getModulePositions(),
         new Pose2d(0, 0, new Rotation2d(0)));
-
   }
 
   public SwerveSubsystem(

@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems.Climb;
 
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
@@ -23,17 +24,44 @@ public class Climb extends SubsystemBase {
 
     public Climb() {
         leaderMotor.restoreFactoryDefaults();
+        leaderMotor.setIdleMode(IdleMode.kBrake);
+        followerMotor.restoreFactoryDefaults();
         followerMotor.restoreFactoryDefaults();
         followerMotor.follow(leaderMotor, true);
     }
 
     public void putPosition() {
-        SmartDashboard.putNumber("[Climb] follower position", followerEencoder.getPosition());
         SmartDashboard.putNumber("[Climb] leader position", leaderEncoder.getPosition());
+        SmartDashboard.putNumber("[Climb] follower position", followerEencoder.getPosition());
     }
 
     public void set(double output) {
         leaderMotor.set(output);
+    }
+
+    public void setWithEncoderPositionReset(double output, boolean resetEncoderPosition) {
+        leaderMotor.set(output);
+        if (resetEncoderPosition) {
+            leaderEncoder.setPosition(0);
+            followerEencoder.setPosition(0);
+        }
+    }
+
+    public void climberUp(double output) {
+        double topLeaderPosition = 0;
+        double topFollowerPosition = 0;
+        double offset = 0;
+        if (leaderEncoder.getPosition() <= topLeaderPosition + offset) {
+            set(output);
+        } else {
+            leaderMotor.stopMotor();
+        }
+
+        if (followerEencoder.getPosition() <= topFollowerPosition + offset) {
+            set(output);
+        } else {
+            followerMotor.stopMotor();
+        }
     }
 
     @Override
@@ -42,6 +70,6 @@ public class Climb extends SubsystemBase {
     }
 
     public Command moveToTheLowest() {
-        return run(() -> set(0.2)).withTimeout(2);
+        return run(() -> setWithEncoderPositionReset(0.2, true)).withTimeout(2);
     }
 }

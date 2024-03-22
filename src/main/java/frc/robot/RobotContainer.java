@@ -44,7 +44,7 @@ public class RobotContainer {
                         Constants.Controller.controllerXboxID);
         private final CommandXboxController driveXbox = new CommandXboxController(Constants.Controller.driveXboxID);
         private final Shooter Shooter = new Shooter();
-        // private final Climb Climb = new Climb();
+        private final Climb Climb = new Climb();
         private final Pivot Pivot = new Pivot();
         private final Camera cam = new Camera();
         private final ShootToSpeaker shootToSpeaker = new ShootToSpeaker();
@@ -62,10 +62,10 @@ public class RobotContainer {
                                                 () -> controllerXbox.a().getAsBoolean(),
                                                 () -> controllerXbox.b().getAsBoolean()));
 
-                // Climb.setDefaultCommand(
-                // new ClimbExample(Climb,
-                // () -> controllerXbox.x().getAsBoolean(),
-                // () -> controllerXbox.y().getAsBoolean()));
+                Climb.setDefaultCommand(
+                                new ClimbExample(Climb,
+                                                () -> controllerXbox.x().getAsBoolean(),
+                                                () -> controllerXbox.y().getAsBoolean()));
 
                 Pivot.setDefaultCommand(
                                 new PivotExample(Pivot, () -> controllerXbox.getRawAxis(0),

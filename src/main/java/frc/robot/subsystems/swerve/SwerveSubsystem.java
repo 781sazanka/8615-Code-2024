@@ -260,10 +260,14 @@ public class SwerveSubsystem extends SubsystemBase {
     // poseEstimator.update(
     // swerveDrive.getOdometryHeading(), swerveDrive.getModulePositions());
 
-    // SmartDashboard.putNumber("[Swerve] rotation in degrees",
-    // swerveDrive.getPose().getRotation().getDegrees());
-    // SmartDashboard.putNumber("[Swerve] rotation in degrees from vision",
-    // LimelightHelpers.getBotPose2d("limelight").getRotation().getDegrees());
+    SmartDashboard.putNumber("[Swerve] rotation in degrees",
+        swerveDrive.getPose().getRotation().getDegrees());
+    SmartDashboard.putNumber("[Swerve] robot rotation (*vision)",
+        LimelightHelpers.getBotPose2d("limelight").getRotation().getDegrees());
+    SmartDashboard.putNumber("[Swerve] target rotation (*vision)", Units.degreesToRadians(
+        LimelightHelpers.getTargetPose3d_RobotSpace("limelight").getRotation().getAngle()));
+    SmartDashboard.putBoolean("[Swerve] target valid", LimelightHelpers.getTV("limelight"));
+
     poseEstimator.update(getHeading(), swerveDrive.getModulePositions());
     if (vision.getTV()) {
       poseEstimator.addVisionMeasurement(vision.getEstimatedRoboPose(), vision.getTimestamp(),

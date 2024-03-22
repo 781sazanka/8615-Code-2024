@@ -76,6 +76,10 @@ public class Shooter extends SubsystemBase {
     public void putData() {
         SmartDashboard.putNumber("[Shooter] top motor speed", motorLeader.getVelocity().getValueAsDouble());
         SmartDashboard.putNumber("[Shooter] bottom motor speed", motorFollower.getVelocity().getValueAsDouble());
+        SmartDashboard.putNumber("[Shooter] intake NEO motor speed", sparkMaxIntakeMotor.getEncoder().getVelocity());
+        SmartDashboard.putNumber("[Shooter] feeder motor speed", sparkMaxFeederMotor.getEncoder().getVelocity());
+        SmartDashboard.putNumber("[Shooter] intake redline motor speed", redlineController.getMotorOutputPercent());
+        SmartDashboard.putBoolean("[Shooter] shooter is clear", isNoteInShooter);
     }
 
     public void shoot(double feederOutput, double shooterVelocity) {

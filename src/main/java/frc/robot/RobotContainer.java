@@ -37,8 +37,8 @@ import frc.robot.subsystems.swerve.SwerveSubsystem;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-        // private final SwerveSubsystem drivebase = new SwerveSubsystem(
-        // new File(Filesystem.getDeployDirectory(), "swerve"));
+        private final SwerveSubsystem drivebase = new SwerveSubsystem(
+                        new File(Filesystem.getDeployDirectory(), "swerve"));
         private final CommandJoystick debugJoystick = new CommandJoystick(3);
         private final CommandXboxController controllerXbox = new CommandXboxController(
                         Constants.Controller.controllerXboxID);

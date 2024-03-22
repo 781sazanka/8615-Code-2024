@@ -17,26 +17,42 @@ import frc.robot.Constants;
 
 public class Climb extends SubsystemBase {
 
-    final CANSparkMax leaderMotor = new CANSparkMax(Constants.Climb.leaderCANID, MotorType.kBrushless);
-    final CANSparkMax followerMotor = new CANSparkMax(Constants.Climb.followerCANID, MotorType.kBrushless);
+    final CANSparkMax leaderMotor = new CANSparkMax(50, MotorType.kBrushless);
+    final CANSparkMax followerMotor = new CANSparkMax(51, MotorType.kBrushless);
     private RelativeEncoder leaderEncoder = leaderMotor.getEncoder();
     private RelativeEncoder followerEencoder = followerMotor.getEncoder();
+    private boolean reachedTheLowestPoint = false;
 
     public Climb() {
         leaderMotor.restoreFactoryDefaults();
         leaderMotor.setIdleMode(IdleMode.kBrake);
         followerMotor.restoreFactoryDefaults();
         followerMotor.restoreFactoryDefaults();
-        followerMotor.follow(leaderMotor, true);
+        // followerMotor.follow(leaderMotor, true);
     }
 
     public void putPosition() {
         SmartDashboard.putNumber("[Climb] leader position", leaderEncoder.getPosition());
         SmartDashboard.putNumber("[Climb] follower position", followerEencoder.getPosition());
+        SmartDashboard.putBoolean("[Climb] reached the lowest", reachedTheLowestPoint);
     }
 
     public void set(double output) {
+        double pastPosition = leaderEncoder.getPosition();
         leaderMotor.set(output);
+        double currentPosition = leaderEncoder.getPosition();
+    }
+
+    public void set1(double output) {
+        double pastPosition = leaderEncoder.getPosition();
+        leaderMotor.set(output);
+        double currentPosition = leaderEncoder.getPosition();
+    }
+
+    public void set2(double output) {
+        double pastPosition = leaderEncoder.getPosition();
+        followerMotor.set(output);
+        double currentPosition = leaderEncoder.getPosition();
     }
 
     public void setWithEncoderPositionReset(double output, boolean resetEncoderPosition) {
@@ -62,6 +78,11 @@ public class Climb extends SubsystemBase {
         } else {
             followerMotor.stopMotor();
         }
+    }
+
+    public void stop() {
+        leaderMotor.set(0);
+        followerMotor.set(0);
     }
 
     @Override

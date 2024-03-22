@@ -56,16 +56,18 @@ public class RobotContainer {
          * The container for the robot. Contains subsystems, OI devices, and commands.
          */
         public RobotContainer() {
-                Shooter.setDefaultCommand(
-                                new ShooterExample(Shooter, () -> controllerXbox.getRawAxis(0),
-                                                () -> controllerXbox.getRawAxis(1),
-                                                () -> controllerXbox.a().getAsBoolean(),
-                                                () -> controllerXbox.b().getAsBoolean()));
+                // Shooter.setDefaultCommand(
+                // new ShooterExample(Shooter, () -> controllerXbox.getRawAxis(0),
+                // () -> controllerXbox.getRawAxis(1),
+                // () -> controllerXbox.a().getAsBoolean(),
+                // () -> controllerXbox.b().getAsBoolean()));
 
                 Climb.setDefaultCommand(
                                 new ClimbExample(Climb,
                                                 () -> controllerXbox.x().getAsBoolean(),
-                                                () -> controllerXbox.y().getAsBoolean()));
+                                                () -> controllerXbox.y().getAsBoolean(),
+                                                () -> controllerXbox.a().getAsBoolean(),
+                                                () -> controllerXbox.b().getAsBoolean()));
 
                 // Pivot.setDefaultCommand(
                 // new PivotExample(Pivot, () -> controllerXbox.getRawAxis(0),

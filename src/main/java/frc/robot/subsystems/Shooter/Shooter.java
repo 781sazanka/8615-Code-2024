@@ -4,8 +4,6 @@
 
 package frc.robot.subsystems.Shooter;
 
-import java.util.function.DoubleSupplier;
-
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.ctre.phoenix6.configs.Slot0Configs;
@@ -14,8 +12,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -25,14 +22,17 @@ public class Shooter extends SubsystemBase {
     final TalonFX motorFollower = new TalonFX(4, "rio");
 
     // VictorSPX redlineMotor = new VictorSPX(40);
-    CANSparkMax sparkMaxFeederMotor = new CANSparkMax(40, MotorType.kBrushless);
-    CANSparkMax sparkMaxIntakeMotor1 = new CANSparkMax(41, MotorType.kBrushless);
-    CANSparkMax sparkMaxIntakeMotor2 = new CANSparkMax(42, MotorType.kBrushless);
+    final CANSparkMax sparkMaxFeederMotor = new CANSparkMax(40, MotorType.kBrushless);
+    final CANSparkMax sparkMaxIntakeMotor = new CANSparkMax(41, MotorType.kBrushless);
+    final VictorSPX redlineController = new VictorSPX(50);
+    final DigitalInput sensorInput = new DigitalInput(5);
+
+    final ControlMode mode = com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput;
+    boolean isNoteInShooter;
 
     public Shooter() {
         sparkMaxFeederMotor.restoreFactoryDefaults();
-        sparkMaxIntakeMotor1.restoreFactoryDefaults();
-        sparkMaxIntakeMotor2.restoreFactoryDefaults();
+        sparkMaxIntakeMotor.restoreFactoryDefaults();
 
         motorLeader.clearStickyFaults(0);
         motorFollower.clearStickyFaults(0);
@@ -49,6 +49,14 @@ public class Shooter extends SubsystemBase {
         motorFollower.getConfigurator().apply(slot0Configs);
     }
 
+    public void stop() {
+        motorLeader.stopMotor();
+        motorFollower.stopMotor();
+        sparkMaxFeederMotor.stopMotor();
+        sparkMaxIntakeMotor.stopMotor();
+        redlineController.set(mode, 0);
+    }
+
     public void runShooterMotor(double velocity) {
         // create a velocity closed-loop request, voltage output, slot 0 configs
         final VelocityVoltage m_request = new VelocityVoltage(0).withSlot(0);
@@ -60,9 +68,9 @@ public class Shooter extends SubsystemBase {
         sparkMaxFeederMotor.set(output);
     }
 
-    public void runIntakeMotor(double output) {
-        sparkMaxIntakeMotor1.set(output);
-        sparkMaxIntakeMotor2.set(output);
+    public void runIntakeMotor(double sparkMaxOutput, double redlineOutput) {
+        sparkMaxIntakeMotor.set(sparkMaxOutput);
+        redlineController.set(mode, redlineOutput);
     }
 
     public void putData() {
@@ -70,16 +78,22 @@ public class Shooter extends SubsystemBase {
         SmartDashboard.putNumber("[Shooter] bottom motor speed", motorFollower.getVelocity().getValueAsDouble());
     }
 
-    public void stop() {
-        motorLeader.stopMotor();
-        motorFollower.stopMotor();
-        runFeederMotor(0);
-        runIntakeMotor(0);
-        // sparkMaxMotor.stopMotor();
+    public void shoot(double feederOutput, double shooterVelocity) {
+        runFeederMotor(feederOutput);
+        runShooterMotor(shooterVelocity);
+    }
+
+    public void getNote(double feederOutput, double intakeSparkMaxOutput, double intakeRedlineOutput) {
+        if (isNoteInShooter == false) {
+            runFeederMotor(feederOutput);
+            runIntakeMotor(intakeSparkMaxOutput, intakeRedlineOutput);
+        }
+        System.out.println(isNoteInShooter);
     }
 
     @Override
     public void periodic() {
         putData();
+        isNoteInShooter = sensorInput.get();
     }
 }

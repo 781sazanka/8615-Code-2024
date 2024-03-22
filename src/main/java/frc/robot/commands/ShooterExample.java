@@ -51,29 +51,12 @@ public class ShooterExample extends Command {
     @Override
 
     public void execute() {
-        shooter.putData();
-        NetworkTableEntry ty = table.getEntry("ty");
-        double targetOffsetAngle_Vertical = ty.getDouble(0.0);
-        double limelightMountAngleDegrees = 25.0;
-        double limelightLensHeightInches = 20.0;
-        double goalHeightInches = 60.0;
-        double angleToGoalDegrees = limelightMountAngleDegrees + targetOffsetAngle_Vertical;
-        double angleToGoalRadians = angleToGoalDegrees * (3.14159 / 180.0);
-        double distanceFromLimelightToGoalInches = (goalHeightInches - limelightLensHeightInches)
-                / Math.tan(angleToGoalRadians);
-        SmartDashboard.putNumber("[LL] tx", table.getEntry("tx").getDouble(0.0));
-        SmartDashboard.putNumber("[LL] ty", table.getEntry("ty").getDouble(0.0));
-        SmartDashboard.putNumber("[LL] distance", distanceFromLimelightToGoalInches);
-        SmartDashboard.putNumber("valid target", table.getEntry("tv").getInteger(0));
         if (leftAxis.get() >= 0.1) {
         } else if (rightAxis.get() >= 0.1) {
-            shooter.runShooterMotor(rightAxis.get() * 20);
         } else if (isAButtonPressed.get()) {
-            // run feeder
-            shooter.runFeederMotor(0.2);
+            shooter.shoot(0.5, 0.5);
         } else if (isBButtonPressed.get()) {
-            // run shooter at very low speed
-            shooter.runShooterMotor(1);
+            shooter.getNote(0.5, 0.3, 0.5);
         } else {
             shooter.stop();
         }

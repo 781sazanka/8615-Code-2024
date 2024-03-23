@@ -138,6 +138,8 @@ public class SwerveSubsystem extends SubsystemBase {
       DoubleSupplier headingY) {
     // swerveDrive.setHeadingCorrection(true); // Normally you would want heading
     // correction for this kind of control.
+    swerveDrive.setHeadingCorrection(false);
+
     return run(
         () -> {
           double xInput = Math.pow(translationX.getAsDouble(), 3); // Smooth controll out
@@ -146,7 +148,7 @@ public class SwerveSubsystem extends SubsystemBase {
           driveFieldOriented(swerveDrive.swerveController.getTargetSpeeds(xInput, yInput,
               headingX.getAsDouble(),
               headingY.getAsDouble(),
-              swerveDrive.getOdometryHeading().getRadians(),
+              // swerveDrive.getOdometryHeading().getRadians()
               swerveDrive.getMaximumVelocity()));
 
         });

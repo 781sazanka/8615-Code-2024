@@ -37,14 +37,14 @@ import frc.robot.subsystems.swerve.SwerveSubsystem;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-        private final SwerveSubsystem drivebase = new SwerveSubsystem(
-                        new File(Filesystem.getDeployDirectory(), "swerve"));
+        // private final SwerveSubsystem drivebase = new SwerveSubsystem(
+        // new File(Filesystem.getDeployDirectory(), "swerve"));
         private final CommandJoystick debugJoystick = new CommandJoystick(3);
         private final CommandXboxController controllerXbox = new CommandXboxController(
                         Constants.Controller.controllerXboxID);
         private final CommandXboxController driveXbox = new CommandXboxController(Constants.Controller.driveXboxID);
         private final Shooter Shooter = new Shooter();
-        private final Climb Climb = new Climb();
+        // private final Climb Climb = new Climb();
         private final Pivot Pivot = new Pivot();
         private final Camera cam = new Camera();
         private final ShootToSpeaker shootToSpeaker = new ShootToSpeaker();
@@ -56,24 +56,24 @@ public class RobotContainer {
          * The container for the robot. Contains subsystems, OI devices, and commands.
          */
         public RobotContainer() {
-                // Shooter.setDefaultCommand(
-                // new ShooterExample(Shooter, () -> controllerXbox.getRawAxis(0),
-                // () -> controllerXbox.getRawAxis(1),
+                Shooter.setDefaultCommand(
+                                new ShooterExample(Shooter, () -> controllerXbox.getRawAxis(0),
+                                                () -> controllerXbox.getRawAxis(1),
+                                                () -> controllerXbox.x().getAsBoolean(),
+                                                () -> controllerXbox.y().getAsBoolean()));
+
+                // Climb.setDefaultCommand(
+                // new ClimbExample(Climb,
+                // () -> controllerXbox.x().getAsBoolean(),
+                // () -> controllerXbox.y().getAsBoolean(),
                 // () -> controllerXbox.a().getAsBoolean(),
                 // () -> controllerXbox.b().getAsBoolean()));
 
-                Climb.setDefaultCommand(
-                                new ClimbExample(Climb,
-                                                () -> controllerXbox.x().getAsBoolean(),
-                                                () -> controllerXbox.y().getAsBoolean(),
+                Pivot.setDefaultCommand(
+                                new PivotExample(Pivot, () -> controllerXbox.rightBumper().getAsBoolean(),
+                                                () -> controllerXbox.leftBumper().getAsBoolean(),
                                                 () -> controllerXbox.a().getAsBoolean(),
                                                 () -> controllerXbox.b().getAsBoolean()));
-
-                // Pivot.setDefaultCommand(
-                // new PivotExample(Pivot, () -> controllerXbox.getRawAxis(0),
-                // () -> controllerXbox.getRawAxis(1),
-                // () -> controllerXbox.a().getAsBoolean(),
-                // () -> controllerXbox.button(101).getAsBoolean()));
 
                 cam.cameraStream();
 

@@ -39,7 +39,7 @@ public class Pivot extends SubsystemBase {
 
         // in init function, set slot 0 gains
         var slot0Configs = new Slot0Configs();
-        slot0Configs.kP = 24; // An error of 0.5 rotations results in 12 V output
+        slot0Configs.kP = 4; // An error of 0.5 rotations results in 12 V output
         slot0Configs.kI = 0; // no output for integrated error
         slot0Configs.kD = 0.1; // A velocity of 1 rps results in 0.1 V output
 
@@ -49,16 +49,16 @@ public class Pivot extends SubsystemBase {
 
     public void setPosition(double position) {
         // create a position closed-loop request, voltage output, slot 0 configs
-        final PositionVoltage m_request = new PositionVoltage(0).withSlot(0);
+        final PositionVoltage m_request = new PositionVoltage(position).withSlot(0);
 
         // set position to 10 rotations
-        motorLeader.setControl(m_request.withPosition(position));
+        motorLeader.setControl(m_request);
 
         // motorFollower.setControl(new Follower(motorLeader.getDeviceID(), true));
     }
 
     public void runMootr(double output) {
-        motorFollower.setControl(new DutyCycleOut(output));
+        motorLeader.setControl(new DutyCycleOut(output));
         // motorFollower.setControl(new Follower(motorLeader.getDeviceID(), true));
     }
 

@@ -15,15 +15,17 @@ public class PivotExample extends Command {
     private final Supplier<Boolean> isAButtonPressed;
     private final Supplier<Boolean> isBButtonPressed;
 
-    private final Supplier<Double> leftAxis;
-    private final Supplier<Double> rightAxis;
+    private final Supplier<Boolean> xButton;
+    private final Supplier<Boolean> yButton;
 
     private final Pivot pivot;
+    private boolean buttonEverPressed;
+    double position;
 
     public PivotExample(
             Pivot subsystem,
-            Supplier<Double> leftAxisValue,
-            Supplier<Double> rightAxisValue,
+            Supplier<Boolean> leftAxisValue,
+            Supplier<Boolean> rightAxisValue,
             Supplier<Boolean> AButton,
             Supplier<Boolean> BButton) {
         pivot = subsystem;
@@ -31,9 +33,10 @@ public class PivotExample extends Command {
         isBButtonPressed = BButton;
         // isXButtonPressed = XButton.get();
         // isYButtonPressed = YButton.get();
-        leftAxis = leftAxisValue;
-        rightAxis = rightAxisValue;
+        xButton = leftAxisValue;
+        yButton = rightAxisValue;
 
+        buttonEverPressed = false;
         addRequirements(pivot);
     }
 
@@ -45,27 +48,28 @@ public class PivotExample extends Command {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        double position = -100000;
-
         pivot.putData();
 
-        if (leftAxis.get() >= 0.1) {
-            pivot.runMootr(leftAxis.get() * 0.5);
+        if (xButton.get()) {
+            pivot.runMootr(-0.2);
             position = pivot.currentPosition();
-            // currentPosition = pivot.currentPosition();
-        } else if (leftAxis.get() <= -0.1) {
-            pivot.runMootr(leftAxis.get() * 0.5);
-            position = pivot.currentPosition();
-            // currentPosition = pivot.currentPosition();
-        } else if (rightAxis.get() >= 0.1) {
-        } else if (isAButtonPressed.get()) {
-            // emergency stop button
-            pivot.stop();
+            buttonEverPressed = true;
 
+            // currentPosition = pivot.currentPosition();
+        } else if (yButton.get()) {
+            pivot.runMootr(0.2);
+            position = pivot.currentPosition();
+            buttonEverPressed = true;
         } else if (isBButtonPressed.get()) {
         } else {
             // pivot.setPosition(pivot.currentPosition());
-            pivot.stop();
+            if (buttonEverPressed) {
+                // pivot.setPosition(position);
+                // pivot.stop();
+                pivot.setPosition(position);
+            } else {
+                pivot.stop();
+            }
         }
 
         SmartDashboard.putNumber("[Pivot] tx", LimelightHelpers.getTX("limelight"));

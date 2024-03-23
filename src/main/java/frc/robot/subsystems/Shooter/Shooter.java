@@ -22,7 +22,7 @@ public class Shooter extends SubsystemBase {
     final TalonFX motorFollower = new TalonFX(4, "rio");
 
     // VictorSPX redlineMotor = new VictorSPX(40);
-    final CANSparkMax sparkMaxFeederMotor = new CANSparkMax(40, MotorType.kBrushless);
+    final CANSparkMax sparkMaxFeederMotor = new CANSparkMax(50, MotorType.kBrushless);
     final CANSparkMax sparkMaxIntakeMotor = new CANSparkMax(41, MotorType.kBrushless);
     final VictorSPX redlineController = new VictorSPX(50);
     final DigitalInput sensorInput = new DigitalInput(5);

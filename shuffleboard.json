@@ -1345,13 +1345,13 @@
           },
           "6,2": {
             "size": [
-              4,
-              3
+              3,
+              2
             ],
             "content": {
               "_type": "Camera Stream",
-              "_source0": "camera_server://USB Camera 0",
-              "_title": "USB Camera 0",
+              "_source0": "camera_server://limelight",
+              "_title": "limelight",
               "_glyph": 148,
               "_showGlyph": false,
               "Crosshair/Show crosshair": true,

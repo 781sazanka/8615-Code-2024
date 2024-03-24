@@ -138,8 +138,6 @@ public class SwerveSubsystem extends SubsystemBase {
       DoubleSupplier headingY) {
     // swerveDrive.setHeadingCorrection(true); // Normally you would want heading
     // correction for this kind of control.
-    swerveDrive.setHeadingCorrection(false);
-
     return run(
         () -> {
           double xInput = Math.pow(translationX.getAsDouble(), 3); // Smooth controll out
@@ -148,7 +146,7 @@ public class SwerveSubsystem extends SubsystemBase {
           driveFieldOriented(swerveDrive.swerveController.getTargetSpeeds(xInput, yInput,
               headingX.getAsDouble(),
               headingY.getAsDouble(),
-              // swerveDrive.getOdometryHeading().getRadians()
+              swerveDrive.getOdometryHeading().getRadians(),
               swerveDrive.getMaximumVelocity()));
 
         });
@@ -305,12 +303,16 @@ public class SwerveSubsystem extends SubsystemBase {
     );
   }
 
-  public Command aimAtTarget(LimelightHelpers limelight) {
-    double rotation = LimelightHelpers.getBotPose2d("limelight").getRotation().getDegrees();
+  public Command aimAtTarget() {
+    final double rotation;
+    if (LimelightHelpers.getTV("limelight")) {
+      rotation = Math.toDegrees(LimelightHelpers.getTargetPose3d_RobotSpace("limelight").getRotation().getAngle());
+    } else {
+      rotation = getPose().getRotation().getDegrees();
+    }
     return run(() -> {
-      drive(getTargetSpeeds(0,
-          0,
-          Rotation2d.fromDegrees(rotation)));
+      drive(new Translation2d(0, 0), rotation, false);
     });
   }
+
 }

@@ -6,8 +6,13 @@ package frc.robot;
 
 import java.io.File;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
@@ -25,6 +30,7 @@ import frc.robot.commands.DriveToSpeaker;
 import frc.robot.commands.PivotExample;
 import frc.robot.commands.ShootToSpeaker;
 import frc.robot.commands.ShooterExample;
+import frc.robot.commands.auto.AutoShoot;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 
 /**
@@ -37,8 +43,8 @@ import frc.robot.subsystems.swerve.SwerveSubsystem;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-        // private final SwerveSubsystem drivebase = new SwerveSubsystem(
-        // new File(Filesystem.getDeployDirectory(), "swerve"));
+        private final SwerveSubsystem drivebase = new SwerveSubsystem(
+                        new File(Filesystem.getDeployDirectory(), "swerve"));
         private final CommandJoystick debugJoystick = new CommandJoystick(3);
         private final CommandXboxController controllerXbox = new CommandXboxController(
                         Constants.Controller.controllerXboxID);
@@ -49,6 +55,8 @@ public class RobotContainer {
         private final Camera cam = new Camera();
         private final ShootToSpeaker shootToSpeaker = new ShootToSpeaker();
 
+        private final SendableChooser<Command> autoChooser;
+
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
          */
@@ -56,6 +64,8 @@ public class RobotContainer {
          * The container for the robot. Contains subsystems, OI devices, and commands.
          */
         public RobotContainer() {
+                NamedCommands.registerCommand("getNotes", new AutoShoot(Shooter).withTimeout(5));
+
                 Shooter.setDefaultCommand(
                                 new ShooterExample(Shooter, () -> controllerXbox.getRawAxis(0),
                                                 () -> controllerXbox.getRawAxis(1),
@@ -87,6 +97,9 @@ public class RobotContainer {
                 // drivebase.setDefaultCommand(driveFieldOrientedDirectAngle);
 
                 configureBindings();
+
+                autoChooser = AutoBuilder.buildAutoChooser("New Auto");
+                SmartDashboard.putData("Auto Chooser", autoChooser);
         }
 
         /**
@@ -119,6 +132,6 @@ public class RobotContainer {
         public Command getAutonomousCommand() {
                 // An example command will be run in autonomous
                 // return drivebase.getAutonomousCommand("New Auto");
-                return null;
+                return autoChooser.getSelected();
         }
 }

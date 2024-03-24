@@ -91,8 +91,9 @@ public class Shooter extends SubsystemBase {
         if (isNoteInShooter == false) {
             runFeederMotor(feederOutput);
             runIntakeMotor(intakeSparkMaxOutput, intakeRedlineOutput);
+        } else {
+            stop();
         }
-        System.out.println(isNoteInShooter);
     }
 
     @Override

@@ -52,10 +52,11 @@ public class ShooterExample extends Command {
 
     public void execute() {
         if (leftAxis.get() >= 0.1) {
-            // shooter.shoot(-0.5, leftAxis.get() * 10);
+            // do nothing
         } else if (rightAxis.get() >= 0.1) {
+            // do nothing
         } else if (isAButtonPressed.get()) {
-            shooter.shoot(-0.5, 6);
+            shooter.shoot(-1.7, 25);
         } else if (isBButtonPressed.get()) {
             shooter.shoot(-0.4, 4);
             // intake

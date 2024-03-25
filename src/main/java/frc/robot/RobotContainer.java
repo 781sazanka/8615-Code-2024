@@ -37,8 +37,8 @@ import frc.robot.subsystems.swerve.SwerveSubsystem;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-        // private final SwerveSubsystem drivebase = new SwerveSubsystem(
-        // new File(Filesystem.getDeployDirectory(), "swerve"));
+        private final SwerveSubsystem drivebase = new SwerveSubsystem(
+                        new File(Filesystem.getDeployDirectory(), "swerve"));
         private final CommandJoystick debugJoystick = new CommandJoystick(3);
         private final CommandXboxController controllerXbox = new CommandXboxController(
                         Constants.Controller.controllerXboxID);
@@ -57,10 +57,10 @@ public class RobotContainer {
          */
         public RobotContainer() {
                 Shooter.setDefaultCommand(
-                                new ShooterExample(Shooter, () -> controllerXbox.getRawAxis(0),
-                                                () -> controllerXbox.getRawAxis(1),
-                                                () -> controllerXbox.x().getAsBoolean(),
-                                                () -> controllerXbox.y().getAsBoolean()));
+                                new ShooterExample(Shooter, () -> driveXbox.getRawAxis(0),
+                                                () -> driveXbox.getRawAxis(1),
+                                                () -> driveXbox.x().getAsBoolean(),
+                                                () -> driveXbox.y().getAsBoolean()));
 
                 // Climb.setDefaultCommand(
                 // new ClimbExample(Climb,
@@ -70,21 +70,21 @@ public class RobotContainer {
                 // () -> controllerXbox.b().getAsBoolean()));
 
                 Pivot.setDefaultCommand(
-                                new PivotExample(Pivot, () -> controllerXbox.rightBumper().getAsBoolean(),
-                                                () -> controllerXbox.leftBumper().getAsBoolean(),
-                                                () -> controllerXbox.a().getAsBoolean(),
-                                                () -> controllerXbox.b().getAsBoolean()));
+                                new PivotExample(Pivot, () -> driveXbox.rightBumper().getAsBoolean(),
+                                                () -> driveXbox.leftBumper().getAsBoolean(),
+                                                () -> driveXbox.a().getAsBoolean(),
+                                                () -> driveXbox.b().getAsBoolean()));
 
                 cam.cameraStream();
 
-                // Command driveFieldOrientedDirectAngle = drivebase.driveCommand(
-                // () -> MathUtil.applyDeadband(-1 * driveXbox.getLeftY(),
-                // OperatorConstants.LEFT_Y_DEADBAND),
-                // () -> MathUtil.applyDeadband(-1 * driveXbox.getLeftX(),
-                // OperatorConstants.LEFT_X_DEADBAND),
-                // () -> -1 * driveXbox.getRightX(),
-                // () -> -1 * driveXbox.getRightY());
-                // drivebase.setDefaultCommand(driveFieldOrientedDirectAngle);
+                Command driveFieldOrientedDirectAngle = drivebase.driveCommand(
+                                () -> MathUtil.applyDeadband(-1 * driveXbox.getLeftY(),
+                                                OperatorConstants.LEFT_Y_DEADBAND),
+                                () -> MathUtil.applyDeadband(-1 * driveXbox.getLeftX(),
+                                                OperatorConstants.LEFT_X_DEADBAND),
+                                () -> -1 * driveXbox.getRightX(),
+                                () -> -1 * driveXbox.getRightY());
+                drivebase.setDefaultCommand(driveFieldOrientedDirectAngle);
 
                 configureBindings();
         }
@@ -109,6 +109,7 @@ public class RobotContainer {
                 // OperatorConstants.LEFT_Y_DEADBAND),
                 // () -> MathUtil.applyDeadband(-1 * driveXbox.getLeftX(),
                 // OperatorConstants.LEFT_X_DEADBAND)));
+                // driveXbox.a().whileTrue(drivebase.resetOdometryCommand());
         }
 
         /**
@@ -118,7 +119,7 @@ public class RobotContainer {
          */
         public Command getAutonomousCommand() {
                 // An example command will be run in autonomous
-                // return drivebase.getAutonomousCommand("New Auto");
+                // return drivebase.getAutonomousCommand("New New Auto");
                 return null;
         }
 }

@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 // import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -31,7 +32,9 @@ import frc.robot.commands.PivotExample;
 import frc.robot.commands.ShootToSpeaker;
 import frc.robot.commands.ShooterExample;
 import frc.robot.commands.auto.AutoShoot;
+import frc.robot.commands.auto.LookAtTarget;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
+import swervelib.SwerveDrive;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -54,6 +57,7 @@ public class RobotContainer {
         private final Pivot Pivot = new Pivot();
         private final Camera cam = new Camera();
         private final ShootToSpeaker shootToSpeaker = new ShootToSpeaker();
+        private final SwerveDrive swerveDrive = drivebase.getSwerveDrive();
 
         private final SendableChooser<Command> autoChooser;
 
@@ -94,7 +98,13 @@ public class RobotContainer {
                 // OperatorConstants.LEFT_X_DEADBAND),
                 // () -> -1 * driveXbox.getRightX(),
                 // () -> -1 * driveXbox.getRightY());
-                // drivebase.setDefaultCommand(driveFieldOrientedDirectAngle);
+
+                Command driveFieldOrientedAnglularVelocity = drivebase.driveCommand(
+                                () -> MathUtil.applyDeadband(driveXbox.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
+                                () -> MathUtil.applyDeadband(driveXbox.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
+                                () -> debugJoystick.getRawAxis(1) * 0.5);
+
+                drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
 
                 configureBindings();
 
@@ -122,6 +132,7 @@ public class RobotContainer {
                 // OperatorConstants.LEFT_Y_DEADBAND),
                 // () -> MathUtil.applyDeadband(-1 * driveXbox.getLeftX(),
                 // OperatorConstants.LEFT_X_DEADBAND)));
+                debugJoystick.button(1).whileTrue(new LookAtTarget(drivebase));
         }
 
         /**

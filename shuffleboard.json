@@ -988,6 +988,32 @@
               "Colors/Color when true": "#7CFC00FF",
               "Colors/Color when false": "#8B0000FF"
             }
+          },
+          "13,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Auto Chooser/default",
+              "_title": "Auto Chooser/default",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "13,1": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Auto Chooser/active",
+              "_title": "Auto Chooser/active",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
           }
         }
       }
@@ -1385,7 +1411,7 @@
   "windowGeometry": {
     "x": 0.0,
     "y": 0.0,
-    "width": 1792.0,
-    "height": 1120.0
+    "width": 682.0,
+    "height": 1280.0
   }
 }

@@ -266,7 +266,6 @@ public class SwerveSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    System.out.println(getHeading().getDegrees());
   }
 
   @Override

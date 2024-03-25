@@ -37,7 +37,7 @@ public class LookAtTarget extends Command {
     public void execute() {
         SwerveDrive swerveDrive = swerve.getSwerveDrive();
 
-        double angleInDegrees = 180;
+        double angleInDegrees = 120;
         swerve.driveFieldOriented(
                 swerveDrive.swerveController.getTargetSpeeds(0, 0, Math.toRadians(angleInDegrees + 45),
                         swerve.getHeading().getRadians(), swerveDrive.getMaximumVelocity()));

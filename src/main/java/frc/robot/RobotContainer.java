@@ -61,6 +61,8 @@ public class RobotContainer {
 
         private final SendableChooser<Command> autoChooser;
 
+        private final AutoShoot autoShoot = new AutoShoot(Shooter);
+
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
          */
@@ -68,7 +70,8 @@ public class RobotContainer {
          * The container for the robot. Contains subsystems, OI devices, and commands.
          */
         public RobotContainer() {
-                NamedCommands.registerCommand("getNotes", new AutoShoot(Shooter).withTimeout(5));
+                NamedCommands.registerCommand("getNotes", autoShoot.score());
+                NamedCommands.registerCommand("lookAtTarget", new LookAtTarget(drivebase));
 
                 Shooter.setDefaultCommand(
                                 new ShooterExample(Shooter, () -> controllerXbox.getRawAxis(0),

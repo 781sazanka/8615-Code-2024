@@ -103,9 +103,16 @@ public class Shooter extends SubsystemBase {
         return run(() -> getNote(feederOutput, intakeSparkMaxOutput, intakeRedlineOutput));
     }
 
+    public double getShooterVelocity() {
+        return motorLeader.getVelocity().getValueAsDouble();
+    }
+
+    public boolean isNoteInFeeder() {
+        return sensorInput.get();
+    }
+
     @Override
     public void periodic() {
         putData();
-        isNoteInShooter = sensorInput.get();
     }
 }

@@ -4,30 +4,30 @@
 
 package frc.robot.subsystems.Pivot;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.controls.*;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.AbsoluteEncoder;
-import com.revrobotics.CANSparkMax;
-import edu.wpi.first.wpilibj.DigitalInput;
+
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 
 public class Pivot extends SubsystemBase {
 
     final TalonFX motorLeader = new TalonFX(30, "rio");
     final TalonFX motorFollower = new TalonFX(32, "rio");
-    // final CANSparkMax sparkMaxMotor = new
-    // CANSparkMax(Constants.Pivot.sparkMaxCANID, MotorType.kBrushless);
     final DutyCycleEncoder dutyCycleEncoder;
+
+    double maxEncoderValue = -2; // lowest position
+    double minEncoderValue = -14; // highest position
+
+    double kP = 0.3;
+    double kI = 0.0005;
+    double kD = 0.0005;
+
+    private PIDController rotationPID = new PIDController(kP, kI, kD);
 
     public Pivot() {
         int dioChannel = 0;
@@ -48,18 +48,40 @@ public class Pivot extends SubsystemBase {
     }
 
     public void setPosition(double position) {
-        // create a position closed-loop request, voltage output, slot 0 configs
-        final PositionVoltage m_request = new PositionVoltage(position).withSlot(0);
+        if (minEncoderValue <= position && position <= maxEncoderValue) {
+            final PositionVoltage m_request = new PositionVoltage(position).withSlot(0);
+            motorLeader.setControl(m_request);
+        } else {
 
-        // set position to 10 rotations
-        motorLeader.setControl(m_request);
+            System.out.println("Error: Set pivot position out of range!");
 
-        // motorFollower.setControl(new Follower(motorLeader.getDeviceID(), true));
+            if (position < minEncoderValue) {
+                final PositionVoltage m_request = new PositionVoltage(minEncoderValue).withSlot(0);
+                motorLeader.setControl(m_request);
+            } else if (maxEncoderValue < position) {
+                final PositionVoltage m_request = new PositionVoltage(maxEncoderValue).withSlot(0);
+                motorLeader.setControl(m_request);
+            }
+        }
     }
 
-    public void runMootr(double output) {
+    public void setPositionFromDegrees(double targetPosition) {
+        double currentAbsoluteEncoderPosition = dutyCycleEncoder.getAbsolutePosition() * 360;
+        double output = rotationPID.calculate(currentAbsoluteEncoderPosition,
+                targetPosition);
+        rotationPID.setTolerance(1.0);
+
+        double currentPosition = currentPosition();
+        if (minEncoderValue <= currentPosition && currentPosition <= maxEncoderValue) {
+            runMotor(MathUtil.clamp(output, -0.3, 0.3));
+            if (rotationPID.atSetpoint()) {
+            }
+        }
+
+    }
+
+    public void runMotor(double output) {
         motorLeader.setControl(new DutyCycleOut(output));
-        // motorFollower.setControl(new Follower(motorLeader.getDeviceID(), true));
     }
 
     public double currentPosition() {
@@ -69,15 +91,12 @@ public class Pivot extends SubsystemBase {
     public void putData() {
         SmartDashboard.putNumber("[Pivot] top motor speed", motorLeader.getVelocity().getValueAsDouble());
         SmartDashboard.putNumber("[Pivot] bottom motor speed", motorFollower.getVelocity().getValueAsDouble());
-
         SmartDashboard.putNumber("[Pivot] top motor position", motorLeader.getPosition().getValueAsDouble());
         SmartDashboard.putNumber("[Pivot] bottom motor position", motorFollower.getVelocity().getValueAsDouble());
-
         SmartDashboard.putNumber("[Pivot] encoder", dutyCycleEncoder.getAbsolutePosition());
     }
 
     public void stop() {
-        // sparkMaxMotor.stopMotor();
         motorLeader.set(0);
         motorFollower.set(0);
     }
@@ -85,5 +104,7 @@ public class Pivot extends SubsystemBase {
     @Override
     public void periodic() {
         putData();
+
+        double currentPosition = currentPosition();
     }
 }

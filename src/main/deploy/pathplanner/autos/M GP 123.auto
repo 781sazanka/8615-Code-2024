@@ -12,13 +12,19 @@
     "data": {
       "commands": [
         {
-          "type": "parallel",
+          "type": "sequential",
           "data": {
             "commands": [
               {
                 "type": "path",
                 "data": {
                   "pathName": "M GP123 P1"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "getNotes"
                 }
               }
             ]

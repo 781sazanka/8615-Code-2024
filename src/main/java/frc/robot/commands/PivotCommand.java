@@ -4,38 +4,27 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
 import java.util.function.Supplier;
 import frc.robot.subsystems.Pivot.Pivot;
-import frc.robot.subsystems.Vision.LimelightHelpers;
 
-public class PivotExample extends Command {
-    private final Supplier<Boolean> isAButtonPressed;
-    private final Supplier<Boolean> isBButtonPressed;
-
-    private final Supplier<Boolean> xButton;
-    private final Supplier<Boolean> yButton;
-
+public class PivotCommand extends Command {
+    private final Supplier<Boolean> button1;
+    private final Supplier<Boolean> button2;
     private final Pivot pivot;
     private boolean buttonEverPressed;
     double position;
 
-    public PivotExample(
+    public PivotCommand(
             Pivot subsystem,
-            Supplier<Boolean> leftAxisValue,
-            Supplier<Boolean> rightAxisValue,
-            Supplier<Boolean> AButton,
-            Supplier<Boolean> BButton) {
+            Supplier<Boolean> button1status,
+            Supplier<Boolean> button2status,
+            Supplier<Boolean> button3status,
+            Supplier<Boolean> button4status) {
         pivot = subsystem;
-        isAButtonPressed = AButton;
-        isBButtonPressed = BButton;
-        // isXButtonPressed = XButton.get();
-        // isYButtonPressed = YButton.get();
-        xButton = leftAxisValue;
-        yButton = rightAxisValue;
-
+        button1 = button1status;
+        button2 = button2status;
         buttonEverPressed = false;
         addRequirements(pivot);
     }
@@ -50,17 +39,17 @@ public class PivotExample extends Command {
     public void execute() {
         pivot.putData();
 
-        if (xButton.get()) {
-            pivot.runMootr(-0.2);
+        if (button1.get()) {
+            pivot.runMotor(-0.2);
             position = pivot.currentPosition();
             buttonEverPressed = true;
 
             // currentPosition = pivot.currentPosition();
-        } else if (yButton.get()) {
-            pivot.runMootr(0.2);
+        } else if (button2.get()) {
+            pivot.runMotor(0.2);
             position = pivot.currentPosition();
             buttonEverPressed = true;
-        } else if (isBButtonPressed.get()) {
+
         } else {
             // pivot.setPosition(pivot.currentPosition());
             if (buttonEverPressed) {
@@ -71,9 +60,6 @@ public class PivotExample extends Command {
                 pivot.stop();
             }
         }
-
-        SmartDashboard.putNumber("[Pivot] tx", LimelightHelpers.getTX("limelight"));
-        SmartDashboard.putNumber("[Pivot] ty", LimelightHelpers.getTY("limelight"));
     }
 
     // Called once the command ends or is interrupted.

@@ -28,10 +28,10 @@ import frc.robot.subsystems.Vision.Vision;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.ClimbExample;
 import frc.robot.commands.DriveToSpeaker;
-import frc.robot.commands.PivotExample;
+import frc.robot.commands.PivotCommand;
 import frc.robot.commands.ShootToSpeaker;
 import frc.robot.commands.ShooterExample;
-import frc.robot.commands.auto.AutoShoot;
+import frc.robot.commands.auto.AutoCommand;
 import frc.robot.commands.auto.LookAtTarget;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import swervelib.SwerveDrive;
@@ -57,11 +57,11 @@ public class RobotContainer {
         private final Pivot Pivot = new Pivot();
         private final Camera cam = new Camera();
         private final ShootToSpeaker shootToSpeaker = new ShootToSpeaker();
-        private final SwerveDrive swerveDrive = drivebase.getSwerveDrive();
+        // private final SwerveDrive swerveDrive = drivebase.getSwerveDrive();
 
-        private final SendableChooser<Command> autoChooser;
+        // private final SendableChooser<Command> autoChooser;
 
-        private final AutoShoot autoShoot = new AutoShoot(Shooter);
+        private final AutoCommand autoShoot = new AutoCommand(Shooter, Pivot);
 
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -71,7 +71,7 @@ public class RobotContainer {
          */
         public RobotContainer() {
                 NamedCommands.registerCommand("getNotes", autoShoot.score());
-                NamedCommands.registerCommand("lookAtTarget", new LookAtTarget(drivebase));
+                // NamedCommands.registerCommand("lookAtTarget", new LookAtTarget(drivebase));
 
                 Shooter.setDefaultCommand(
                                 new ShooterExample(Shooter, () -> controllerXbox.getRawAxis(0),
@@ -87,32 +87,26 @@ public class RobotContainer {
                 // () -> controllerXbox.b().getAsBoolean()));
 
                 Pivot.setDefaultCommand(
-                                new PivotExample(Pivot, () -> controllerXbox.rightBumper().getAsBoolean(),
+                                new PivotCommand(Pivot, () -> controllerXbox.rightBumper().getAsBoolean(),
                                                 () -> controllerXbox.leftBumper().getAsBoolean(),
-                                                () -> controllerXbox.a().getAsBoolean(),
-                                                () -> controllerXbox.b().getAsBoolean()));
+                                                () -> controllerXbox.button(999).getAsBoolean(),
+                                                () -> controllerXbox.button(1000).getAsBoolean()));
 
                 cam.cameraStream();
 
-                // Command driveFieldOrientedDirectAngle = drivebase.driveCommand(
-                // () -> MathUtil.applyDeadband(-1 * driveXbox.getLeftY(),
-                // OperatorConstants.LEFT_Y_DEADBAND),
-                // () -> MathUtil.applyDeadband(-1 * driveXbox.getLeftX(),
-                // OperatorConstants.LEFT_X_DEADBAND),
-                // () -> -1 * driveXbox.getRightX(),
-                // () -> -1 * driveXbox.getRightY());
-
                 Command driveFieldOrientedAnglularVelocity = drivebase.driveCommand(
-                                () -> MathUtil.applyDeadband(driveXbox.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
-                                () -> MathUtil.applyDeadband(driveXbox.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
+                                () -> MathUtil.applyDeadband(driveXbox.getLeftY(),
+                                                OperatorConstants.LEFT_Y_DEADBAND),
+                                () -> MathUtil.applyDeadband(driveXbox.getLeftX(),
+                                                OperatorConstants.LEFT_X_DEADBAND),
                                 () -> debugJoystick.getRawAxis(1) * 0.5);
 
                 drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
 
                 configureBindings();
 
-                autoChooser = AutoBuilder.buildAutoChooser("New Auto");
-                SmartDashboard.putData("Auto Chooser", autoChooser);
+                // autoChooser = AutoBuilder.buildAutoChooser("New Auto");
+                // SmartDashboard.putData("Auto Chooser", autoChooser);
         }
 
         /**
@@ -136,6 +130,7 @@ public class RobotContainer {
                 // () -> MathUtil.applyDeadband(-1 * driveXbox.getLeftX(),
                 // OperatorConstants.LEFT_X_DEADBAND)));
                 debugJoystick.button(1).whileTrue(new LookAtTarget(drivebase));
+                debugJoystick.button(2).whileTrue(new AutoCommand(Shooter, Pivot).rotatePivotInDegrees(45));
         }
 
         /**
@@ -146,6 +141,7 @@ public class RobotContainer {
         public Command getAutonomousCommand() {
                 // An example command will be run in autonomous
                 // return drivebase.getAutonomousCommand("New Auto");
-                return autoChooser.getSelected();
+                // return autoChooser.getSelected();
+                return null;
         }
 }

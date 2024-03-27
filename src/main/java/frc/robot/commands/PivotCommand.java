@@ -12,6 +12,8 @@ import frc.robot.subsystems.Pivot.Pivot;
 public class PivotCommand extends Command {
     private final Supplier<Boolean> button1;
     private final Supplier<Boolean> button2;
+    private final Supplier<Boolean> button3;
+    private final Supplier<Boolean> button4;
     private final Pivot pivot;
     private boolean buttonEverPressed;
     double position;
@@ -25,6 +27,8 @@ public class PivotCommand extends Command {
         pivot = subsystem;
         button1 = button1status;
         button2 = button2status;
+        button3 = button3status;
+        button4 = button4status;
         buttonEverPressed = false;
         addRequirements(pivot);
     }
@@ -50,7 +54,11 @@ public class PivotCommand extends Command {
             position = pivot.getCurrentPosition();
             buttonEverPressed = true;
 
-        } else {
+        } else if (button3.get()) {
+            pivot.setPositionFromDegrees(60);
+        }
+
+        else {
             // pivot.setPosition(pivot.currentPosition());
             if (buttonEverPressed) {
                 // pivot.setPosition(position);

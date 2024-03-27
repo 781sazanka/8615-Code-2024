@@ -22,8 +22,12 @@ public class AutoCommand {
 
     }
 
-    public Command score() {
+    public Command intake() {
         return Commands.sequence(shooter.getNoteCommand(0, 0, 0).withTimeout(2));
+    }
+
+    public Command score() {
+        return Commands.run(() -> shooter.shoot(0, 0), shooter).until(() -> shooter.isNoteInFeeder() == false);
     }
 
     public Command rotatePivot(double angle) {

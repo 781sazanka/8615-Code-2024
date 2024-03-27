@@ -72,7 +72,8 @@ public class RobotContainer {
          * The container for the robot. Contains subsystems, OI devices, and commands.
          */
         public RobotContainer() {
-                NamedCommands.registerCommand("getNotes", autoShoot.score());
+                NamedCommands.registerCommand("getNote", autoShoot.intake());
+                NamedCommands.registerCommand("shootNote", autoShoot.score());
                 // NamedCommands.registerCommand("lookAtTarget", new LookAtTarget(drivebase));
 
                 Shooter.setDefaultCommand(
@@ -93,7 +94,7 @@ public class RobotContainer {
                                 new PivotCommand(Pivot,
                                                 () -> controllerXbox.rightBumper().getAsBoolean(),
                                                 () -> controllerXbox.leftBumper().getAsBoolean(),
-                                                () -> controllerXbox.button(999).getAsBoolean(),
+                                                () -> controllerXbox.leftTrigger().getAsBoolean(),
                                                 () -> controllerXbox.button(1000).getAsBoolean()));
 
                 cam.cameraStream();
@@ -103,8 +104,7 @@ public class RobotContainer {
                                                 OperatorConstants.LEFT_Y_DEADBAND),
                                 () -> MathUtil.applyDeadband(driveXbox.getLeftX(),
                                                 OperatorConstants.LEFT_X_DEADBAND),
-                                // () -> driveXbox.getRightX() * 0.5);
-                                () -> debugJoystick.getRawAxis(0) * 0.5);
+                                () -> driveXbox.getRightX() * 0.5);
 
                 drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
 

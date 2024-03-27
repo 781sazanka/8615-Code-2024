@@ -23,9 +23,9 @@ public class Pivot extends SubsystemBase {
     double maxEncoderValue = -2; // lowest position
     double minEncoderValue = -14; // highest position
 
-    double kP = 0.3;
-    double kI = 0.0005;
-    double kD = 0.0005;
+    double kP = 8;
+    double kI = 0;
+    double kD = 1.3;
 
     private PIDController rotationPID = new PIDController(kP, kI, kD);
 
@@ -52,9 +52,7 @@ public class Pivot extends SubsystemBase {
             final PositionVoltage m_request = new PositionVoltage(position).withSlot(0);
             motorLeader.setControl(m_request);
         } else {
-
             System.out.println("Error: Set pivot position out of range!");
-
             if (position < minEncoderValue) {
                 final PositionVoltage m_request = new PositionVoltage(minEncoderValue).withSlot(0);
                 motorLeader.setControl(m_request);
@@ -65,28 +63,41 @@ public class Pivot extends SubsystemBase {
         }
     }
 
-    public void setPositionFromDegrees(double targetPosition) {
+    public void setPositionFromDegrees(double targetAngle) {
         // safety feature
-        double currentPosition = getCurrentPosition();
-        if (currentPosition < minEncoderValue) {
-            final PositionVoltage m_request = new PositionVoltage(minEncoderValue).withSlot(0);
-            motorLeader.setControl(m_request);
-        } else if (maxEncoderValue < currentPosition) {
-            final PositionVoltage m_request = new PositionVoltage(maxEncoderValue).withSlot(0);
-            motorLeader.setControl(m_request);
-        } else {
-            double currentAbsoluteEncoderPosition = dutyCycleEncoder.getAbsolutePosition() * 360;
-            double output = rotationPID.calculate(currentAbsoluteEncoderPosition,
-                    targetPosition);
-            rotationPID.setTolerance(1.0);
+        // double currentPosition = getCurrentPosition();
+        // if (currentPosition < minEncoderValue) {
+        // final PositionVoltage m_request = new
+        // PositionVoltage(minEncoderValue).withSlot(0);
+        // motorLeader.setControl(m_request);
+        // } else if (maxEncoderValue < currentPosition) {
+        // final PositionVoltage m_request = new
+        // PositionVoltage(maxEncoderValue).withSlot(0);
+        // motorLeader.setControl(m_request);
+        // } else {
+        // double currentAbsoluteEncoderPosition =
+        // dutyCycleEncoder.getAbsolutePosition();
+        // double output = rotationPID.calculate(currentAbsoluteEncoderPosition,
+        // targetPosition);
+        // rotationPID.setTolerance(0.02);
+        // rotationPID.setSetpoint(targetPosition);
+        // runMotor(MathUtil.clamp(output, -0.3, 0.3));
+        // }
 
-            if (minEncoderValue <= currentPosition && currentPosition <= maxEncoderValue) {
-                if (rotationPID.atSetpoint()) {
-                    setPosition(getCurrentPosition());
-                } else {
-                    runMotor(MathUtil.clamp(output, -0.3, 0.3));
-                }
-            }
+        double dutyCycleEncoderOffset = 0; // change this
+        double encoderTolerance = 0.02;
+        double setPosition = targetAngle / 360 - dutyCycleEncoderOffset;
+
+        double encoderAbsolutePosition = dutyCycleEncoder.getAbsolutePosition();
+        if ((setPosition - encoderTolerance) <= encoderAbsolutePosition
+                && encoderAbsolutePosition <= (setPosition + encoderTolerance)) { // in range
+            setPosition(getCurrentPosition());
+        } else if (encoderAbsolutePosition < (setPosition - encoderTolerance)) {
+            runMotor(-0.2);
+        } else if ((setPosition + encoderTolerance) < encoderAbsolutePosition) {
+            runMotor(0.2);
+        } else {
+            setPosition(getCurrentPosition());
         }
     }
 

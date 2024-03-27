@@ -57,8 +57,8 @@ public class RobotContainer {
         // private final Climb Climb = new Climb();
         private final Pivot Pivot = new Pivot();
         private final Camera cam = new Camera();
-        private final ShootToSpeaker shootToSpeaker = new ShootToSpeaker();
         // private final SwerveDrive swerveDrive = drivebase.getSwerveDrive();
+        private final ShootToSpeaker shootToSpeaker = new ShootToSpeaker();
         private final Vision vision = new Vision();
 
         // private final SendableChooser<Command> autoChooser;
@@ -103,7 +103,8 @@ public class RobotContainer {
                                                 OperatorConstants.LEFT_Y_DEADBAND),
                                 () -> MathUtil.applyDeadband(driveXbox.getLeftX(),
                                                 OperatorConstants.LEFT_X_DEADBAND),
-                                () -> driveXbox.getRightX() * 0.5);
+                                // () -> driveXbox.getRightX() * 0.5);
+                                () -> debugJoystick.getRawAxis(0) * 0.5);
 
                 drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
 

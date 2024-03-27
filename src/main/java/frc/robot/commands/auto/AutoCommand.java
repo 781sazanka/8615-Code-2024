@@ -31,7 +31,7 @@ public class AutoCommand {
     }
 
     public Command rotatePivotInDegrees(double angle) {
-        Command returnObject = new RunCommand(() -> pivot.setPosition(pivot.currentPosition()), pivot);
+        Command returnObject = new RunCommand(() -> pivot.setPosition(pivot.getCurrentPosition()), pivot);
         String limelightName = "limelight";
         if (LimelightHelpers.getTV(limelightName)) {
             double targetAngle = LimelightHelpers.getTargetPose3d_RobotSpace(limelightName).getY();

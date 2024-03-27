@@ -39,38 +39,22 @@ public class ShooterCommand extends Command {
     @Override
     public void execute() {
         if (button1.get()) {
-            double desiredShooterVelocity = 30;
-            double acceptableVelocityTolerance = 0.5;
-            double feederOutput = -0.5; // -1 to 1
-            shooter.runShooterMotor(desiredShooterVelocity);
-            if (shooter.getShooterVelocity() + acceptableVelocityTolerance >= desiredShooterVelocity)
-                shooter.runFeederMotor(feederOutput);
-        } else if (button2.get()) {
-            double desiredShooterVelocity = 10;
-            double acceptableVelocityTolerance = 0.5;
-            double feederOutput = -0.3; // -1 to 1
-            shooter.runShooterMotor(desiredShooterVelocity);
-            if (shooter.getShooterVelocity() + acceptableVelocityTolerance >= desiredShooterVelocity)
-                shooter.runFeederMotor(feederOutput);
-        } else if (button3.get()) {
-            double intakeNeoOutput = 0.5; // -1 to 1
-            double intakeRedlineOutput = 0.5; // -1 to 1
-            double feederOutput = 0.3; // -1 to 1
+            shooter.shoot(30, -0.5);
+        }
 
-            if (shooter.isNoteInFeeder() == false) {
-                shooter.runIntakeMotor(intakeNeoOutput, intakeRedlineOutput);
-                shooter.runFeederMotor(feederOutput);
-            } else {
-                shooter.stop();
-            }
-        } else if (button4.get()) {
-            double intakeNeoOutput = -0.5; // -1 to 1
-            double intakeRedlineOutput = -0.5; // -1 to 1
-            double feederOutput = -0.3; // -1 to 1
+        else if (button2.get()) {
+            shooter.shoot(10, -0.5);
+        }
 
-            shooter.runIntakeMotor(intakeNeoOutput, intakeRedlineOutput);
-            shooter.runFeederMotor(feederOutput);
-        } else {
+        else if (button3.get()) {
+            shooter.getNote(-0.3, 0.5, 0.5);
+        }
+
+        else if (button4.get()) {
+            shooter.getNote(-0.3, 0.5, 0.5);
+        }
+
+        else {
             shooter.stop(); // force stop
         }
     }

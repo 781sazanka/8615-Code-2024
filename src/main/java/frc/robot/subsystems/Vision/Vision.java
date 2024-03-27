@@ -86,7 +86,7 @@ public class Vision extends SubsystemBase {
 
     @Override
     public void periodic() {
-        System.out.println(getTV());
-        System.out.println(getTargetAngleInPivot());
+        // System.out.println(getTV());
+        // System.out.println(getTargetAngleInPivot());
     }
 }

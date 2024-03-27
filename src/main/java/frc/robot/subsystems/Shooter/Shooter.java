@@ -83,9 +83,11 @@ public class Shooter extends SubsystemBase {
         SmartDashboard.putBoolean("[Shooter] shooter is clear", isNoteInShooter);
     }
 
-    public void shoot(double feederOutput, double shooterVelocity) {
-        runFeederMotor(feederOutput);
-        runShooterMotor(shooterVelocity);
+    public void shoot(double desiredShooterVelocity, double feederOutput) {
+        double acceptableVelocityTolerance = 0.5;
+        runShooterMotor(desiredShooterVelocity);
+        if (getShooterVelocity() + acceptableVelocityTolerance >= desiredShooterVelocity)
+            runFeederMotor(feederOutput);
     }
 
     public void getNote(double feederOutput, double intakeSparkMaxOutput, double intakeRedlineOutput) {
@@ -95,8 +97,6 @@ public class Shooter extends SubsystemBase {
         } else {
             stop();
         }
-
-        System.out.println("get note running!!");
     }
 
     public Command getNoteCommand(double feederOutput, double intakeSparkMaxOutput, double intakeRedlineOutput) {

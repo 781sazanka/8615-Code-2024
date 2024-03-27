@@ -41,13 +41,13 @@ public class PivotCommand extends Command {
 
         if (button1.get()) {
             pivot.runMotor(-0.2);
-            position = pivot.currentPosition();
+            position = pivot.getCurrentPosition();
             buttonEverPressed = true;
 
             // currentPosition = pivot.currentPosition();
         } else if (button2.get()) {
             pivot.runMotor(0.2);
-            position = pivot.currentPosition();
+            position = pivot.getCurrentPosition();
             buttonEverPressed = true;
 
         } else {

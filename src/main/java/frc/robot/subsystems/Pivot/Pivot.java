@@ -66,25 +66,35 @@ public class Pivot extends SubsystemBase {
     }
 
     public void setPositionFromDegrees(double targetPosition) {
-        double currentAbsoluteEncoderPosition = dutyCycleEncoder.getAbsolutePosition() * 360;
-        double output = rotationPID.calculate(currentAbsoluteEncoderPosition,
-                targetPosition);
-        rotationPID.setTolerance(1.0);
+        // safety feature
+        double currentPosition = getCurrentPosition();
+        if (currentPosition < minEncoderValue) {
+            final PositionVoltage m_request = new PositionVoltage(minEncoderValue).withSlot(0);
+            motorLeader.setControl(m_request);
+        } else if (maxEncoderValue < currentPosition) {
+            final PositionVoltage m_request = new PositionVoltage(maxEncoderValue).withSlot(0);
+            motorLeader.setControl(m_request);
+        } else {
+            double currentAbsoluteEncoderPosition = dutyCycleEncoder.getAbsolutePosition() * 360;
+            double output = rotationPID.calculate(currentAbsoluteEncoderPosition,
+                    targetPosition);
+            rotationPID.setTolerance(1.0);
 
-        double currentPosition = currentPosition();
-        if (minEncoderValue <= currentPosition && currentPosition <= maxEncoderValue) {
-            runMotor(MathUtil.clamp(output, -0.3, 0.3));
-            if (rotationPID.atSetpoint()) {
+            if (minEncoderValue <= currentPosition && currentPosition <= maxEncoderValue) {
+                if (rotationPID.atSetpoint()) {
+                    setPosition(getCurrentPosition());
+                } else {
+                    runMotor(MathUtil.clamp(output, -0.3, 0.3));
+                }
             }
         }
-
     }
 
     public void runMotor(double output) {
         motorLeader.setControl(new DutyCycleOut(output));
     }
 
-    public double currentPosition() {
+    public double getCurrentPosition() {
         return motorLeader.getPosition().getValueAsDouble();
     }
 
@@ -105,6 +115,6 @@ public class Pivot extends SubsystemBase {
     public void periodic() {
         putData();
 
-        double currentPosition = currentPosition();
+        double currentPosition = getCurrentPosition();
     }
 }

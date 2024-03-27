@@ -29,7 +29,6 @@ public class Shooter extends SubsystemBase {
     final DigitalInput sensorInput = new DigitalInput(5);
 
     final ControlMode mode = com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput;
-    boolean isNoteInShooter;
 
     public Shooter() {
         sparkMaxFeederMotor.restoreFactoryDefaults();
@@ -80,7 +79,7 @@ public class Shooter extends SubsystemBase {
         SmartDashboard.putNumber("[Shooter] intake NEO motor speed", sparkMaxIntakeMotor.getEncoder().getVelocity());
         SmartDashboard.putNumber("[Shooter] feeder motor speed", sparkMaxFeederMotor.getEncoder().getVelocity());
         SmartDashboard.putNumber("[Shooter] intake redline motor speed", redlineController.getMotorOutputPercent());
-        SmartDashboard.putBoolean("[Shooter] shooter is clear", isNoteInShooter);
+        SmartDashboard.putBoolean("[Shooter] shooter is clear", isNoteInFeeder());
     }
 
     public void shoot(double desiredShooterVelocity, double feederOutput) {
@@ -91,7 +90,8 @@ public class Shooter extends SubsystemBase {
     }
 
     public void getNote(double feederOutput, double intakeSparkMaxOutput, double intakeRedlineOutput) {
-        if (isNoteInShooter == false) {
+        boolean isNoteInFeeder = isNoteInFeeder();
+        if (isNoteInFeeder == false) {
             runFeederMotor(feederOutput);
             runIntakeMotor(intakeSparkMaxOutput, intakeRedlineOutput);
         } else {

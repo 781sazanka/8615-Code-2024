@@ -23,11 +23,11 @@ public class AutoCommand {
     }
 
     public Command intake() {
-        return Commands.sequence(shooter.getNoteCommand(0, 0, 0).withTimeout(2));
+        return Commands.sequence(shooter.getNoteCommand(0, 0, 0).until(() -> !shooter.isNoteInFeeder()));
     }
 
     public Command score() {
-        return Commands.run(() -> shooter.shoot(0, 0), shooter).until(() -> shooter.isNoteInFeeder() == false);
+        return Commands.run(() -> shooter.shoot(0, 0), shooter).until(() -> shooter.isNoteInFeeder());
     }
 
     public Command rotatePivot(double angle) {
@@ -38,6 +38,8 @@ public class AutoCommand {
         Command returnObject = new RunCommand(() -> pivot.setPosition(pivot.getCurrentPosition()), pivot);
         String limelightName = "limelight";
         if (LimelightHelpers.getTV(limelightName)) {
+            LimelightHelpers.setPriorityTagID(limelightName, 4);
+            LimelightHelpers.setPriorityTagID(limelightName, 7);
             double targetAngle = LimelightHelpers.getTargetPose3d_RobotSpace(limelightName).getY();
             returnObject = new RunCommand(() -> pivot.setPositionFromDegrees(angle), pivot);
         }

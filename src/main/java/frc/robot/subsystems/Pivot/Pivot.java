@@ -85,7 +85,7 @@ public class Pivot extends SubsystemBase {
         // }
 
         double dutyCycleEncoderOffset = 0; // change this
-        double encoderTolerance = 0.02;
+        double encoderTolerance = 0.05;
         double setPosition = targetAngle / 360 - dutyCycleEncoderOffset;
 
         double encoderAbsolutePosition = dutyCycleEncoder.getAbsolutePosition();

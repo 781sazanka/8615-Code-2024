@@ -51,7 +51,7 @@ public class ShooterCommand extends Command {
         }
 
         else if (button4.get()) {
-            shooter.getNote(-0.3, 0.5, 0.5);
+            shooter.getNote(0.3, -0.5, -0.5);
         }
 
         else {

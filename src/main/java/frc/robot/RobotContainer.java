@@ -30,6 +30,7 @@ import frc.robot.commands.ClimbExample;
 import frc.robot.commands.DriveToSpeaker;
 import frc.robot.commands.PivotCommand;
 import frc.robot.commands.ShootToSpeaker;
+import frc.robot.commands.ShooterCommand;
 import frc.robot.commands.ShooterExample;
 import frc.robot.commands.auto.AutoCommand;
 import frc.robot.commands.auto.LookAtTarget;
@@ -58,6 +59,7 @@ public class RobotContainer {
         private final Camera cam = new Camera();
         private final ShootToSpeaker shootToSpeaker = new ShootToSpeaker();
         // private final SwerveDrive swerveDrive = drivebase.getSwerveDrive();
+        private final Vision vision = new Vision();
 
         // private final SendableChooser<Command> autoChooser;
 
@@ -74,10 +76,11 @@ public class RobotContainer {
                 // NamedCommands.registerCommand("lookAtTarget", new LookAtTarget(drivebase));
 
                 Shooter.setDefaultCommand(
-                                new ShooterExample(Shooter, () -> controllerXbox.getRawAxis(0),
-                                                () -> controllerXbox.getRawAxis(1),
-                                                () -> controllerXbox.x().getAsBoolean(),
-                                                () -> controllerXbox.y().getAsBoolean()));
+                                new ShooterCommand(Shooter,
+                                                () -> controllerXbox.x().getAsBoolean(), // speaker shoot
+                                                () -> controllerXbox.y().getAsBoolean(), // amp shoot
+                                                () -> controllerXbox.a().getAsBoolean(), // intake
+                                                () -> controllerXbox.b().getAsBoolean())); // intake reverse
 
                 // Climb.setDefaultCommand(
                 // new ClimbExample(Climb,
@@ -87,7 +90,8 @@ public class RobotContainer {
                 // () -> controllerXbox.b().getAsBoolean()));
 
                 Pivot.setDefaultCommand(
-                                new PivotCommand(Pivot, () -> controllerXbox.rightBumper().getAsBoolean(),
+                                new PivotCommand(Pivot,
+                                                () -> controllerXbox.rightBumper().getAsBoolean(),
                                                 () -> controllerXbox.leftBumper().getAsBoolean(),
                                                 () -> controllerXbox.button(999).getAsBoolean(),
                                                 () -> controllerXbox.button(1000).getAsBoolean()));
@@ -99,7 +103,7 @@ public class RobotContainer {
                                                 OperatorConstants.LEFT_Y_DEADBAND),
                                 () -> MathUtil.applyDeadband(driveXbox.getLeftX(),
                                                 OperatorConstants.LEFT_X_DEADBAND),
-                                () -> debugJoystick.getRawAxis(1) * 0.5);
+                                () -> driveXbox.getRightX() * 0.5);
 
                 drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
 
@@ -129,8 +133,9 @@ public class RobotContainer {
                 // OperatorConstants.LEFT_Y_DEADBAND),
                 // () -> MathUtil.applyDeadband(-1 * driveXbox.getLeftX(),
                 // OperatorConstants.LEFT_X_DEADBAND)));
-                debugJoystick.button(1).whileTrue(new LookAtTarget(drivebase));
-                debugJoystick.button(2).whileTrue(new AutoCommand(Shooter, Pivot).rotatePivotInDegrees(45));
+                // debugJoystick.button(1).whileTrue(new LookAtTarget(drivebase));
+                // debugJoystick.button(2).whileTrue(new AutoCommand(Shooter,
+                // Pivot).rotatePivotInDegrees(45));
         }
 
         /**

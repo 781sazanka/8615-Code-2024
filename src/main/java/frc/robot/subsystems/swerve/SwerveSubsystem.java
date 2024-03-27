@@ -457,8 +457,7 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   public void rotateToAngle(double rotationInDegrees) {
-    swerveDrive.drive(getTargetSpeeds(0,
-        0,
+    swerveDrive.drive(getTargetSpeeds(0, 0,
         Rotation2d.fromDegrees(rotationInDegrees)));
   }
 }

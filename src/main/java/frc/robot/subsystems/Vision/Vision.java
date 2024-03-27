@@ -8,11 +8,12 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.math.Vector;
 
-public class Vision {
+public class Vision extends SubsystemBase {
 
     NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
 
@@ -68,5 +69,24 @@ public class Vision {
 
     public boolean getTV() {
         return LimelightHelpers.getTV("limelight");
+    }
+
+    public double getTargetAngleInPivot() {
+        double limelightAngleOffset = 30; // degrees
+        double alpha = 5 + limelightAngleOffset; // degrees
+        double speakerTagHeight = 1.5; // meters
+        double limelightHeightOffset = 0.2;
+        double x1 = speakerTagHeight - limelightHeightOffset;
+        double d1 = x1 / Math.tan(alpha);
+
+        double d2 = 0.4; // meters
+        double h1 = 0.05; // meters
+        return Math.toDegrees(Math.atan((d1 + d2) / (x1 - h1)));
+    }
+
+    @Override
+    public void periodic() {
+        System.out.println(getTV());
+        System.out.println(getTargetAngleInPivot());
     }
 }

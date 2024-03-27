@@ -12,6 +12,8 @@ import frc.robot.subsystems.Shooter.Shooter;;
 public class ShooterCommand extends Command {
     private final Supplier<Boolean> button1;
     private final Supplier<Boolean> button2;
+    private final Supplier<Boolean> button3;
+    private final Supplier<Boolean> button4;
     private final Shooter shooter;
 
     public ShooterCommand(
@@ -23,6 +25,8 @@ public class ShooterCommand extends Command {
         shooter = subsystem;
         button1 = button1status;
         button2 = button2status;
+        button3 = button3status;
+        button4 = button4status;
         addRequirements(shooter);
     }
 
@@ -42,19 +46,32 @@ public class ShooterCommand extends Command {
             if (shooter.getShooterVelocity() + acceptableVelocityTolerance >= desiredShooterVelocity)
                 shooter.runFeederMotor(feederOutput);
         } else if (button2.get()) {
+            double desiredShooterVelocity = 10;
+            double acceptableVelocityTolerance = 0.5;
+            double feederOutput = -0.3; // -1 to 1
+            shooter.runShooterMotor(desiredShooterVelocity);
+            if (shooter.getShooterVelocity() + acceptableVelocityTolerance >= desiredShooterVelocity)
+                shooter.runFeederMotor(feederOutput);
+        } else if (button3.get()) {
             double intakeNeoOutput = 0.5; // -1 to 1
             double intakeRedlineOutput = 0.5; // -1 to 1
             double feederOutput = 0.3; // -1 to 1
 
-            // if (shooter.isNoteInFeeder() == false) {
-            // shooter.runIntakeMotor(intakeNeoOutput, intakeRedlineOutput);
-            // shooter.runFeederMotor(feederOutput);
-            // } else {
-            // shooter.stop();
-            // }
+            if (shooter.isNoteInFeeder() == false) {
+                shooter.runIntakeMotor(intakeNeoOutput, intakeRedlineOutput);
+                shooter.runFeederMotor(feederOutput);
+            } else {
+                shooter.stop();
+            }
+        } else if (button4.get()) {
+            double intakeNeoOutput = -0.5; // -1 to 1
+            double intakeRedlineOutput = -0.5; // -1 to 1
+            double feederOutput = -0.3; // -1 to 1
 
             shooter.runIntakeMotor(intakeNeoOutput, intakeRedlineOutput);
             shooter.runFeederMotor(feederOutput);
+        } else {
+            shooter.stop(); // force stop
         }
     }
 

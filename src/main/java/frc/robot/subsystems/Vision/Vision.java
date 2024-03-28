@@ -88,5 +88,7 @@ public class Vision extends SubsystemBase {
     public void periodic() {
         // System.out.println(getTV());
         // System.out.println(getTargetAngleInPivot());
+        SmartDashboard.putNumber("angle speaker rotation",
+                Math.toDegrees(LimelightHelpers.getTargetPose3d_CameraSpace("limelight").getRotation().getAngle()));
     }
 }

@@ -90,8 +90,8 @@ public class SwerveSubsystem extends SubsystemBase {
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
-    swerveDrive.setHeadingCorrection(false); // Heading correction should only be used while controlling the robot via
-                                             // angle.
+    swerveDrive.setHeadingCorrection(true); // Heading correction should only be used while controlling the robot via
+                                            // angle.
     setupPathPlanner();
 
     poseEstimator = new SwerveDrivePoseEstimator(
@@ -265,16 +265,19 @@ public class SwerveSubsystem extends SubsystemBase {
 
   public void updatePoseEstimator() {
     LimelightHelpers.PoseEstimate limelightMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
-    if (limelightMeasurement.tagCount >= 2) {
-      poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
-      poseEstimator.addVisionMeasurement(
-          limelightMeasurement.pose,
-          limelightMeasurement.timestampSeconds);
-    } else {
-      poseEstimator.update(getHeading(), swerveDrive.getModulePositions());
-    }
+    // if (limelightMeasurement.tagCount >= 2) {
+    poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
+    poseEstimator.addVisionMeasurement(
+        limelightMeasurement.pose,
+        limelightMeasurement.timestampSeconds);
+    // } else {
+    // poseEstimator.update(getHeading(), swerveDrive.getModulePositions());
+    // }
 
     field.setRobotPose(poseEstimator.getEstimatedPosition());
+
+    SmartDashboard.putNumber("target angle",
+        Math.toDegrees(LimelightHelpers.getTargetPose3d_RobotSpace("limelight").getRotation().getAngle()));
   }
 
   /**

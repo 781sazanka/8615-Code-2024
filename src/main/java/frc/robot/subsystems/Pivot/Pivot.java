@@ -16,12 +16,12 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Pivot extends SubsystemBase {
 
-    final TalonFX motorLeader = new TalonFX(30, "rio");
-    final TalonFX motorFollower = new TalonFX(32, "rio");
+    final TalonFX motorLeader = new TalonFX(32, "rio");
+    final TalonFX motorFollower = new TalonFX(30, "rio");
     final DutyCycleEncoder dutyCycleEncoder;
 
-    double maxEncoderValue = -2; // lowest position
-    double minEncoderValue = -14; // highest position
+    double maxEncoderValue = 1; // lowest position
+    double minEncoderValue = -85; // highest position
 
     double kP = 8;
     double kI = 0;
@@ -102,7 +102,13 @@ public class Pivot extends SubsystemBase {
     }
 
     public void runMotor(double output) {
-        motorLeader.setControl(new DutyCycleOut(output));
+        // if (minEncoderValue <= getCurrentPosition() && getCurrentPosition() <=
+        // maxEncoderValue) {
+        double absoluteEncoderPosition = dutyCycleEncoder.getAbsolutePosition();
+        if (absoluteEncoderPosition <= 0.06) {
+
+        }
+        // }
     }
 
     public double getCurrentPosition() {

@@ -40,21 +40,28 @@ public class LookAtTarget extends Command {
         SwerveDrive swerveDrive = swerve.getSwerveDrive();
         SwerveController swerveController = swerve.getSwerveController();
 
-        if (LimelightHelpers.getTV(limelightName)) {
-            double targetAngle = Math
-                    .toDegrees(LimelightHelpers.getTargetPose3d_CameraSpace(limelightName).getRotation().getAngle());
-            double rotSpeed = rotationPID.calculate(swerve.getHeading().getDegrees(), targetAngle);
+        // if (LimelightHelpers.getTV(limelightName)) {
+        // double targetAngle = Math
+        // .toDegrees(LimelightHelpers.getTargetPose3d_CameraSpace(limelightName).getRotation().getAngle());
+        // double rotSpeed = rotationPID.calculate(swerve.getHeading().getDegrees(),
+        // targetAngle);
 
-            swerve.driveFieldOriented(
-                    swerveDrive.swerveController.getTargetSpeeds(0, 0,
-                            Math.toRadians(targetAngle),
-                            swerve.getHeading().getRadians(), swerveDrive.getMaximumVelocity()));
+        // swerve.driveFieldOriented(
+        // swerveDrive.swerveController.getTargetSpeeds(0, 0,
+        // Math.toRadians(targetAngle),
+        // swerve.getHeading().getRadians(), swerveDrive.getMaximumVelocity() * 0.01));
 
-            // swerve.drive(new Translation2d(0, 0), MathUtil.clamp(rotSpeed, -1, 1),
-            // false);
-        } else {
-            swerve.drive(new Translation2d(0, 0), 0, false); // force stop
-        }
+        // // swerve.drive(new Translation2d(0, 0), MathUtil.clamp(rotSpeed, -1, 1),
+        // // false);
+        // } else {
+
+        // swerve.drive(new Translation2d(0, 0), 0, false); // force stop
+        // }
+        double targetAngle = 180;
+        swerve.driveFieldOriented(
+                swerveDrive.swerveController.getTargetSpeeds(0, 0,
+                        Math.toRadians(targetAngle),
+                        swerveDrive.getYaw().getRadians(), swerveDrive.getMaximumVelocity()));
     }
 
     // @Override

@@ -53,9 +53,9 @@ public class RobotContainer {
         private final CommandXboxController controllerXbox = new CommandXboxController(
                         Constants.Controller.controllerXboxID);
         private final CommandXboxController driveXbox = new CommandXboxController(Constants.Controller.driveXboxID);
-        private final Shooter Shooter = new Shooter();
+        // private final Shooter Shooter = new Shooter();
         // private final Climb Climb = new Climb();
-        private final Pivot Pivot = new Pivot();
+        // private final Pivot Pivot = new Pivot();
         private final Camera cam = new Camera();
         // private final SwerveDrive swerveDrive = drivebase.getSwerveDrive();
         private final ShootToSpeaker shootToSpeaker = new ShootToSpeaker();
@@ -63,7 +63,7 @@ public class RobotContainer {
 
         // private final SendableChooser<Command> autoChooser;
 
-        private final AutoCommand autoShoot = new AutoCommand(Shooter, Pivot);
+        // private final AutoCommand autoShoot = new AutoCommand(Shooter, Pivot);
 
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -72,16 +72,16 @@ public class RobotContainer {
          * The container for the robot. Contains subsystems, OI devices, and commands.
          */
         public RobotContainer() {
-                NamedCommands.registerCommand("getNote", autoShoot.intake());
-                NamedCommands.registerCommand("shootNote", autoShoot.score());
+                // NamedCommands.registerCommand("getNote", autoShoot.intake());
+                // NamedCommands.registerCommand("shootNote", autoShoot.score());
                 // NamedCommands.registerCommand("lookAtTarget", new LookAtTarget(drivebase));
 
-                Shooter.setDefaultCommand(
-                                new ShooterCommand(Shooter,
-                                                () -> controllerXbox.x().getAsBoolean(), // speaker shoot
-                                                () -> controllerXbox.y().getAsBoolean(), // amp shoot
-                                                () -> controllerXbox.a().getAsBoolean(), // intake
-                                                () -> controllerXbox.b().getAsBoolean())); // intake reverse
+                // Shooter.setDefaultCommand(
+                // new ShooterCommand(Shooter,
+                // () -> driveXbox.x().getAsBoolean(), // speaker shoot
+                // () -> driveXbox.y().getAsBoolean(), // amp shoot
+                // () -> driveXbox.a().getAsBoolean(), // intake
+                // () -> driveXbox.b().getAsBoolean())); // intake reverse
 
                 // Climb.setDefaultCommand(
                 // new ClimbExample(Climb,
@@ -90,12 +90,12 @@ public class RobotContainer {
                 // () -> controllerXbox.a().getAsBoolean(),
                 // () -> controllerXbox.b().getAsBoolean()));
 
-                Pivot.setDefaultCommand(
-                                new PivotCommand(Pivot,
-                                                () -> controllerXbox.rightBumper().getAsBoolean(),
-                                                () -> controllerXbox.leftBumper().getAsBoolean(),
-                                                () -> controllerXbox.leftTrigger().getAsBoolean(),
-                                                () -> controllerXbox.button(1000).getAsBoolean()));
+                // Pivot.setDefaultCommand(
+                // new PivotCommand(Pivot,
+                // () -> driveXbox.rightBumper().getAsBoolean(),
+                // () -> driveXbox.leftBumper().getAsBoolean(),
+                // () -> driveXbox.leftTrigger().getAsBoolean(),
+                // () -> driveXbox.button(1000).getAsBoolean()));
 
                 cam.cameraStream();
 
@@ -104,7 +104,7 @@ public class RobotContainer {
                                                 OperatorConstants.LEFT_Y_DEADBAND),
                                 () -> MathUtil.applyDeadband(driveXbox.getLeftX(),
                                                 OperatorConstants.LEFT_X_DEADBAND),
-                                () -> driveXbox.getRightX() * 0.5);
+                                () -> driveXbox.getRightX() * 0.8);
 
                 drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
 
@@ -134,7 +134,7 @@ public class RobotContainer {
                 // OperatorConstants.LEFT_Y_DEADBAND),
                 // () -> MathUtil.applyDeadband(-1 * driveXbox.getLeftX(),
                 // OperatorConstants.LEFT_X_DEADBAND)));
-                // debugJoystick.button(1).whileTrue(new LookAtTarget(drivebase));
+                driveXbox.a().whileTrue(new LookAtTarget(drivebase));
                 // debugJoystick.button(2).whileTrue(new AutoCommand(Shooter,
                 // Pivot).rotatePivotInDegrees(45));
         }
@@ -148,6 +148,5 @@ public class RobotContainer {
                 // An example command will be run in autonomous
                 return drivebase.getAutonomousCommand("New Auto");
                 // return autoChooser.getSelected();
-                // return null;
         }
 }

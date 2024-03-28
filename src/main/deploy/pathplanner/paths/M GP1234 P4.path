@@ -54,10 +54,10 @@
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 5.0,
-    "maxAcceleration": 5.0,
-    "maxAngularVelocity": 520.0,
-    "maxAngularAcceleration": 720.0
+    "maxVelocity": 0.6,
+    "maxAcceleration": 0.6,
+    "maxAngularVelocity": 108.0,
+    "maxAngularAcceleration": 144.0
   },
   "goalEndState": {
     "velocity": 0,
@@ -65,7 +65,7 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "M GP1234",
+  "folder": null,
   "previewStartingState": {
     "rotation": 30.0,
     "velocity": 0

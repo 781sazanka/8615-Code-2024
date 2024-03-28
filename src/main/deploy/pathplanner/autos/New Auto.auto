@@ -20,12 +20,6 @@
                 "data": {
                   "pathName": "New Path"
                 }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "getNotes"
-                }
               }
             ]
           }
@@ -33,14 +27,7 @@
         {
           "type": "sequential",
           "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "shootNote"
-                }
-              }
-            ]
+            "commands": []
           }
         }
       ]

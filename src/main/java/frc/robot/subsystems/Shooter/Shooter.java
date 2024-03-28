@@ -24,11 +24,13 @@ public class Shooter extends SubsystemBase {
 
     // VictorSPX redlineMotor = new VictorSPX(40);
     final CANSparkMax sparkMaxFeederMotor = new CANSparkMax(50, MotorType.kBrushless);
-    final CANSparkMax sparkMaxIntakeMotor = new CANSparkMax(41, MotorType.kBrushless);
-    final VictorSPX redlineController = new VictorSPX(50);
-    final DigitalInput sensorInput = new DigitalInput(5);
+    final CANSparkMax sparkMaxIntakeMotor = new CANSparkMax(51, MotorType.kBrushless);
+    final VictorSPX redlineController = new VictorSPX(29);
+    final DigitalInput sensorInput = new DigitalInput(1);
 
     final ControlMode mode = com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput;
+    int count = 0;
+    boolean feederCleared = false;
 
     public Shooter() {
         sparkMaxFeederMotor.restoreFactoryDefaults();
@@ -90,13 +92,15 @@ public class Shooter extends SubsystemBase {
     }
 
     public void getNote(double feederOutput, double intakeSparkMaxOutput, double intakeRedlineOutput) {
-        boolean isNoteInFeeder = isNoteInFeeder();
-        if (isNoteInFeeder == false) {
-            runFeederMotor(feederOutput);
-            runIntakeMotor(intakeSparkMaxOutput, intakeRedlineOutput);
-        } else {
-            stop();
-        }
+        // boolean isNoteInFeeder = isNoteInFeeder();
+        // if (isNoteInFeeder == false) {
+        runFeederMotor(feederOutput);
+        runIntakeMotor(intakeSparkMaxOutput, intakeRedlineOutput);
+        sparkMaxIntakeMotor.set(intakeSparkMaxOutput);
+        redlineController.set(mode, intakeRedlineOutput);
+        // } else {
+        // stop();
+        // }
     }
 
     public Command getNoteCommand(double feederOutput, double intakeSparkMaxOutput, double intakeRedlineOutput) {
@@ -111,8 +115,22 @@ public class Shooter extends SubsystemBase {
         return sensorInput.get();
     }
 
+    public boolean hasNoteShot() {
+        return feederCleared;
+    }
+
     @Override
     public void periodic() {
         putData();
+
+        if (isNoteInFeeder() == false) {
+            count++;
+        } else {
+            count = 0;
+        }
+
+        if (count >= 15) { // 0.3 seconds
+            feederCleared = true;
+        }
     }
 }

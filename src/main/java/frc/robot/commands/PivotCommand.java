@@ -15,7 +15,7 @@ public class PivotCommand extends Command {
     private final Supplier<Boolean> button3;
     private final Supplier<Boolean> button4;
     private final Pivot pivot;
-    private boolean buttonEverPressed;
+    private boolean buttonEverPressed = false;
     double position;
 
     public PivotCommand(
@@ -44,26 +44,28 @@ public class PivotCommand extends Command {
         pivot.putData();
 
         if (button1.get()) {
-            pivot.runMotor(0.2);
+            pivot.up();
             position = pivot.getCurrentPosition();
             buttonEverPressed = true;
 
             // currentPosition = pivot.currentPosition();
         } else if (button2.get()) {
-            pivot.runMotor(-0.2);
+            pivot.down();
             position = pivot.getCurrentPosition();
             buttonEverPressed = true;
 
         } else if (button3.get()) {
-            pivot.setPositionFromDegrees(60);
-        }
-
-        else {
+            // pivot.setPositionFromDegrees(60);
+        } else {
             // pivot.setPosition(pivot.currentPosition());
             if (buttonEverPressed) {
                 // pivot.setPosition(position);
                 // pivot.stop();
-                pivot.setPosition(position);
+                if (0.68 <= pivot.getCurrentAbsoluteEncoderValue()) {
+                    pivot.setPosition(position);
+                } else {
+                    pivot.stop();
+                }
             } else {
                 pivot.stop();
             }

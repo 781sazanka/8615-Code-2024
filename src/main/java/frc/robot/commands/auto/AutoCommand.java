@@ -34,16 +34,19 @@ public class AutoCommand {
         return new RunCommand(() -> pivot.setPosition(angle), pivot);
     }
 
-    public Command rotatePivotInDegrees(double angle) {
-        Command returnObject = new RunCommand(() -> pivot.setPosition(pivot.getCurrentPosition()), pivot);
-        String limelightName = "limelight";
-        if (LimelightHelpers.getTV(limelightName)) {
-            LimelightHelpers.setPriorityTagID(limelightName, 4);
-            LimelightHelpers.setPriorityTagID(limelightName, 7);
-            double targetAngle = LimelightHelpers.getTargetPose3d_RobotSpace(limelightName).getY();
-            returnObject = new RunCommand(() -> pivot.setPositionFromDegrees(angle), pivot);
-        }
-        return returnObject;
-    }
+    // public Command rotatePivotInDegrees(double angle) {
+    // Command returnObject = new RunCommand(() ->
+    // pivot.setPosition(pivot.getCurrentPosition()), pivot);
+    // String limelightName = "limelight";
+    // if (LimelightHelpers.getTV(limelightName)) {
+    // LimelightHelpers.setPriorityTagID(limelightName, 4);
+    // LimelightHelpers.setPriorityTagID(limelightName, 7);
+    // double targetAngle =
+    // LimelightHelpers.getTargetPose3d_RobotSpace(limelightName).getY();
+    // returnObject = new RunCommand(() -> pivot.setPositionFromDegrees(angle),
+    // pivot);
+    // }
+    // return returnObject;
+    // }
 
 }

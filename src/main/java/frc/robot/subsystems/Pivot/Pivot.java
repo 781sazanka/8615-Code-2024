@@ -20,7 +20,7 @@ public class Pivot extends SubsystemBase {
     final TalonFX motorFollower = new TalonFX(30, "rio");
     final DutyCycleEncoder dutyCycleEncoder;
 
-    double maxEncoderValue = 1; // lowest position
+    double maxEncoderValue = 0; // lowest position
     double minEncoderValue = -85; // highest position
 
     double kP = 8;
@@ -63,56 +63,30 @@ public class Pivot extends SubsystemBase {
         }
     }
 
-    public void setPositionFromDegrees(double targetAngle) {
-        // safety feature
-        // double currentPosition = getCurrentPosition();
-        // if (currentPosition < minEncoderValue) {
-        // final PositionVoltage m_request = new
-        // PositionVoltage(minEncoderValue).withSlot(0);
-        // motorLeader.setControl(m_request);
-        // } else if (maxEncoderValue < currentPosition) {
-        // final PositionVoltage m_request = new
-        // PositionVoltage(maxEncoderValue).withSlot(0);
-        // motorLeader.setControl(m_request);
-        // } else {
-        // double currentAbsoluteEncoderPosition =
-        // dutyCycleEncoder.getAbsolutePosition();
-        // double output = rotationPID.calculate(currentAbsoluteEncoderPosition,
-        // targetPosition);
-        // rotationPID.setTolerance(0.02);
-        // rotationPID.setSetpoint(targetPosition);
-        // runMotor(MathUtil.clamp(output, -0.3, 0.3));
-        // }
+    public void runMotor(double output) {
+        motorLeader.set(output);
+    }
 
-        double dutyCycleEncoderOffset = 0; // change this
-        double encoderTolerance = 0.05;
-        double setPosition = targetAngle / 360 - dutyCycleEncoderOffset;
-
-        double encoderAbsolutePosition = dutyCycleEncoder.getAbsolutePosition();
-        if ((setPosition - encoderTolerance) <= encoderAbsolutePosition
-                && encoderAbsolutePosition <= (setPosition + encoderTolerance)) { // in range
-            setPosition(getCurrentPosition());
-        } else if (encoderAbsolutePosition < (setPosition - encoderTolerance)) {
-            runMotor(-0.2);
-        } else if ((setPosition + encoderTolerance) < encoderAbsolutePosition) {
-            runMotor(0.2);
-        } else {
-            setPosition(getCurrentPosition());
+    public void up() {
+        double currentAbsoluteEncoderPosition = dutyCycleEncoder.getAbsolutePosition();
+        if (currentAbsoluteEncoderPosition < 0.95) {
+            motorLeader.set(-0.2);
         }
     }
 
-    public void runMotor(double output) {
-        // if (minEncoderValue <= getCurrentPosition() && getCurrentPosition() <=
-        // maxEncoderValue) {
-        double absoluteEncoderPosition = dutyCycleEncoder.getAbsolutePosition();
-        if (absoluteEncoderPosition <= 0.06) {
-
+    public void down() {
+        double currentAbsoluteEncoderPosition = dutyCycleEncoder.getAbsolutePosition();
+        if (0.68 <= currentAbsoluteEncoderPosition) {
+            motorLeader.set(0.2);
         }
-        // }
     }
 
     public double getCurrentPosition() {
         return motorLeader.getPosition().getValueAsDouble();
+    }
+
+    public double getCurrentAbsoluteEncoderValue() {
+        return dutyCycleEncoder.getAbsolutePosition();
     }
 
     public void putData() {

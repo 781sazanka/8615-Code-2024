@@ -119,6 +119,10 @@ public class Shooter extends SubsystemBase {
         return feederCleared;
     }
 
+    public Command runRedlineMotor(double output) {
+        return runEnd(() -> redlineController.set(mode, output), () -> redlineController.set(mode, 0));
+    }
+
     @Override
     public void periodic() {
         putData();

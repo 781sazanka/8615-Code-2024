@@ -53,9 +53,9 @@ public class RobotContainer {
         private final CommandXboxController controllerXbox = new CommandXboxController(
                         Constants.Controller.controllerXboxID);
         private final CommandXboxController driveXbox = new CommandXboxController(Constants.Controller.driveXboxID);
-        // private final Shooter Shooter = new Shooter();
+        private final Shooter Shooter = new Shooter();
         // private final Climb Climb = new Climb();
-        // private final Pivot Pivot = new Pivot();
+        private final Pivot Pivot = new Pivot();
         private final Camera cam = new Camera();
         // private final SwerveDrive swerveDrive = drivebase.getSwerveDrive();
         private final ShootToSpeaker shootToSpeaker = new ShootToSpeaker();
@@ -90,23 +90,23 @@ public class RobotContainer {
                 // () -> controllerXbox.a().getAsBoolean(),
                 // () -> controllerXbox.b().getAsBoolean()));
 
-                // Pivot.setDefaultCommand(
-                // new PivotCommand(Pivot,
-                // () -> driveXbox.rightBumper().getAsBoolean(),
-                // () -> driveXbox.leftBumper().getAsBoolean(),
-                // () -> driveXbox.leftTrigger().getAsBoolean(),
-                // () -> driveXbox.button(1000).getAsBoolean()));
+                Pivot.setDefaultCommand(
+                                new PivotCommand(Pivot,
+                                                () -> driveXbox.rightBumper().getAsBoolean(),
+                                                () -> driveXbox.leftBumper().getAsBoolean(),
+                                                () -> driveXbox.leftTrigger().getAsBoolean(),
+                                                () -> driveXbox.button(1000).getAsBoolean()));
 
                 cam.cameraStream();
 
-                Command driveFieldOrientedAnglularVelocity = drivebase.driveCommand(
-                                () -> MathUtil.applyDeadband(driveXbox.getLeftY(),
-                                                OperatorConstants.LEFT_Y_DEADBAND),
-                                () -> MathUtil.applyDeadband(driveXbox.getLeftX(),
-                                                OperatorConstants.LEFT_X_DEADBAND),
-                                () -> driveXbox.getRightX() * 0.8);
+                // Command driveFieldOrientedAnglularVelocity = drivebase.driveCommand(
+                // () -> MathUtil.applyDeadband(driveXbox.getLeftY(),
+                // OperatorConstants.LEFT_Y_DEADBAND),
+                // () -> MathUtil.applyDeadband(driveXbox.getLeftX(),
+                // OperatorConstants.LEFT_X_DEADBAND),
+                // () -> driveXbox.getRightX() * 0.8);
 
-                drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
+                // drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
 
                 configureBindings();
 
@@ -134,9 +134,17 @@ public class RobotContainer {
                 // OperatorConstants.LEFT_Y_DEADBAND),
                 // () -> MathUtil.applyDeadband(-1 * driveXbox.getLeftX(),
                 // OperatorConstants.LEFT_X_DEADBAND)));
-                driveXbox.a().whileTrue(new LookAtTarget(drivebase));
+                // driveXbox.a().whileTrue(new LookAtTarget(drivebase));
                 // debugJoystick.button(2).whileTrue(new AutoCommand(Shooter,
                 // Pivot).rotatePivotInDegrees(45));
+
+                // controllerXbox.a().whileTrue(Shooter.runRedlineMotor(0.1));
+                // controllerXbox.b().whileTrue(Shooter.runRedlineMotor(0.3));
+                // controllerXbox.x().whileTrue(Shooter.runRedlineMotor(0.7));
+                // controllerXbox.y().whileTrue(Shooter.runRedlineMotor(0.9));
+
+                // neo -0.35
+                // redline -0.7
         }
 
         /**
@@ -146,7 +154,8 @@ public class RobotContainer {
          */
         public Command getAutonomousCommand() {
                 // An example command will be run in autonomous
-                return drivebase.getAutonomousCommand("New Auto");
+                // return drivebase.getAutonomousCommand("New Auto");
                 // return autoChooser.getSelected();
+                return null;
         }
 }

@@ -94,7 +94,7 @@ public class RobotContainer {
                                 new PivotCommand(Pivot,
                                                 () -> driveXbox.rightBumper().getAsBoolean(),
                                                 () -> driveXbox.leftBumper().getAsBoolean(),
-                                                () -> driveXbox.leftTrigger().getAsBoolean(),
+                                                () -> driveXbox.rightTrigger().getAsBoolean(),
                                                 () -> driveXbox.button(1000).getAsBoolean()));
 
                 cam.cameraStream();

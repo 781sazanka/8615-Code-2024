@@ -17,6 +17,8 @@ public class PivotCommand extends Command {
     private final Pivot pivot;
     private boolean buttonEverPressed = false;
     double position;
+    boolean lastMovementWasUp = false;
+    boolean lastMovementWasDown = false;
 
     public PivotCommand(
             Pivot subsystem,
@@ -47,21 +49,22 @@ public class PivotCommand extends Command {
             pivot.up();
             position = pivot.getCurrentPosition();
             buttonEverPressed = true;
-
+            lastMovementWasUp = true;
             // currentPosition = pivot.currentPosition();
         } else if (button2.get()) {
             pivot.down();
             position = pivot.getCurrentPosition();
             buttonEverPressed = true;
-
+            lastMovementWasDown = true;
         } else if (button3.get()) {
             // pivot.setPositionFromDegrees(60);
+            // pivot.goToSpecificPosition(-20);
         } else {
             // pivot.setPosition(pivot.currentPosition());
             if (buttonEverPressed) {
                 // pivot.setPosition(position);
                 // pivot.stop();
-                if (0.68 <= pivot.getCurrentAbsoluteEncoderValue()) {
+                if (0.72 <= pivot.getCurrentAbsoluteEncoderValue()) {
                     pivot.setPosition(position);
                 } else {
                     pivot.stop();

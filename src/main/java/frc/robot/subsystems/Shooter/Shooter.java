@@ -14,6 +14,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Shooter extends SubsystemBase {
@@ -22,13 +23,14 @@ public class Shooter extends SubsystemBase {
     final TalonFX motorFollower = new TalonFX(4, "rio");
 
     // VictorSPX redlineMotor = new VictorSPX(40);
-    final CANSparkMax sparkMaxFeederMotor = new CANSparkMax(50, MotorType.kBrushless);
-    final CANSparkMax sparkMaxIntakeMotor = new CANSparkMax(41, MotorType.kBrushless);
-    final VictorSPX redlineController = new VictorSPX(50);
-    final DigitalInput sensorInput = new DigitalInput(5);
+    final CANSparkMax sparkMaxFeederMotor = new CANSparkMax(51, MotorType.kBrushless);
+    final CANSparkMax sparkMaxIntakeMotor = new CANSparkMax(50, MotorType.kBrushless);
+    final VictorSPX redlineController = new VictorSPX(29);
+    final DigitalInput sensorInput = new DigitalInput(9);
 
     final ControlMode mode = com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput;
-    boolean isNoteInShooter;
+    int count = 0;
+    boolean feederCleared = false;
 
     public Shooter() {
         sparkMaxFeederMotor.restoreFactoryDefaults();
@@ -79,25 +81,61 @@ public class Shooter extends SubsystemBase {
         SmartDashboard.putNumber("[Shooter] intake NEO motor speed", sparkMaxIntakeMotor.getEncoder().getVelocity());
         SmartDashboard.putNumber("[Shooter] feeder motor speed", sparkMaxFeederMotor.getEncoder().getVelocity());
         SmartDashboard.putNumber("[Shooter] intake redline motor speed", redlineController.getMotorOutputPercent());
-        SmartDashboard.putBoolean("[Shooter] shooter is clear", isNoteInShooter);
+        SmartDashboard.putBoolean("[Shooter] shooter is clear", isNoteInFeeder());
+        SmartDashboard.putBoolean("[Shooter]", sensorInput.get());
     }
 
-    public void shoot(double feederOutput, double shooterVelocity) {
-        runFeederMotor(feederOutput);
-        runShooterMotor(shooterVelocity);
+    public void shoot(double desiredShooterVelocity, double feederOutput) {
+        double acceptableVelocityTolerance = 10;
+        runShooterMotor(desiredShooterVelocity);
+        if (getShooterVelocity() + acceptableVelocityTolerance >= desiredShooterVelocity)
+            runFeederMotor(feederOutput);
     }
 
     public void getNote(double feederOutput, double intakeSparkMaxOutput, double intakeRedlineOutput) {
-        if (isNoteInShooter == false) {
-            runFeederMotor(feederOutput);
-            runIntakeMotor(intakeSparkMaxOutput, intakeRedlineOutput);
-        }
-        System.out.println(isNoteInShooter);
+        // boolean isNoteInFeeder = isNoteInFeeder();
+
+        // if (isNoteInFeeder == false) {
+        runFeederMotor(feederOutput);
+        sparkMaxIntakeMotor.set(intakeSparkMaxOutput);
+        redlineController.set(mode, intakeRedlineOutput);
+        // } else {
+        // stop();
+        // }
+    }
+
+    public Command getNoteCommand(double feederOutput, double intakeSparkMaxOutput, double intakeRedlineOutput) {
+        return run(() -> getNote(feederOutput, intakeSparkMaxOutput, intakeRedlineOutput));
+    }
+
+    public double getShooterVelocity() {
+        return motorLeader.getVelocity().getValueAsDouble();
+    }
+
+    public boolean isNoteInFeeder() {
+        return sensorInput.get();
+    }
+
+    public boolean hasNoteShot() {
+        return feederCleared;
+    }
+
+    public Command runRedlineMotor(double output) {
+        return runEnd(() -> redlineController.set(mode, output), () -> redlineController.set(mode, 0));
     }
 
     @Override
     public void periodic() {
         putData();
-        isNoteInShooter = sensorInput.get();
+
+        if (isNoteInFeeder() == false) {
+            count++;
+        } else {
+            count = 0;
+        }
+
+        if (count >= 15) { // 0.3 seconds
+            feederCleared = true;
+        }
     }
 }

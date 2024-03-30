@@ -1,10 +1,18 @@
 {
   "imu": {
+<<<<<<< HEAD
     "type": "navx_mxp_serial",
     "id": 0,
     "canbus": null
   },
   "invertedIMU": false,
+=======
+    "type": "navx_spi",
+    "id": 0,
+    "canbus": null
+  },
+  "invertedIMU": true,
+>>>>>>> auto
   "modules": [
     "frontleft.json",
     "frontright.json",

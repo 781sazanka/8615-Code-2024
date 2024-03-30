@@ -6,10 +6,16 @@ package frc.robot;
 
 import java.io.File;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 // import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -22,10 +28,14 @@ import frc.robot.subsystems.Vision.Vision;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.ClimbExample;
 import frc.robot.commands.DriveToSpeaker;
-import frc.robot.commands.PivotExample;
+import frc.robot.commands.PivotCommand;
 import frc.robot.commands.ShootToSpeaker;
+import frc.robot.commands.ShooterCommand;
 import frc.robot.commands.ShooterExample;
+import frc.robot.commands.auto.AutoCommand;
+import frc.robot.commands.auto.LookAtTarget;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
+import swervelib.SwerveDrive;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -47,7 +57,13 @@ public class RobotContainer {
         // private final Climb Climb = new Climb();
         private final Pivot Pivot = new Pivot();
         private final Camera cam = new Camera();
+        // private final SwerveDrive swerveDrive = drivebase.getSwerveDrive();
         private final ShootToSpeaker shootToSpeaker = new ShootToSpeaker();
+        private final Vision vision = new Vision();
+
+        // private final SendableChooser<Command> autoChooser;
+
+        // private final AutoCommand autoShoot = new AutoCommand(Shooter, Pivot);
 
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -56,11 +72,23 @@ public class RobotContainer {
          * The container for the robot. Contains subsystems, OI devices, and commands.
          */
         public RobotContainer() {
+                // NamedCommands.registerCommand("getNote", autoShoot.intake());
+                // NamedCommands.registerCommand("shootNote", autoShoot.score());
+                // NamedCommands.registerCommand("lookAtTarget", new LookAtTarget(drivebase));
+
                 Shooter.setDefaultCommand(
+<<<<<<< HEAD
                                 new ShooterExample(Shooter, () -> driveXbox.getRawAxis(0),
                                                 () -> driveXbox.getRawAxis(1),
                                                 () -> driveXbox.x().getAsBoolean(),
                                                 () -> driveXbox.y().getAsBoolean()));
+=======
+                                new ShooterCommand(Shooter,
+                                                () -> controllerXbox.x().getAsBoolean(), // speaker shoot
+                                                () -> controllerXbox.y().getAsBoolean(), // amp shoot
+                                                () -> controllerXbox.a().getAsBoolean(), // intake
+                                                () -> controllerXbox.b().getAsBoolean())); // intake reverse
+>>>>>>> auto
 
                 // Climb.setDefaultCommand(
                 // new ClimbExample(Climb,
@@ -69,6 +97,7 @@ public class RobotContainer {
                 // () -> controllerXbox.a().getAsBoolean(),
                 // () -> controllerXbox.b().getAsBoolean()));
 
+<<<<<<< HEAD
                 Pivot.setDefaultCommand(
                                 new PivotExample(Pivot, () -> driveXbox.rightBumper().getAsBoolean(),
                                                 () -> driveXbox.leftBumper().getAsBoolean(),
@@ -85,8 +114,37 @@ public class RobotContainer {
                                 () -> -1 * driveXbox.getRightX(),
                                 () -> -1 * driveXbox.getRightY());
                 drivebase.setDefaultCommand(driveFieldOrientedDirectAngle);
+=======
+                // Pivot.setDefaultCommand(
+                // new PivotCommand(Pivot,
+                // () -> driveXbox.rightBumper().getAsBoolean(),
+                // () -> driveXbox.leftBumper().getAsBoolean(),
+                // () -> driveXbox.leftTrigger().getAsBoolean(),
+                // () -> driveXbox.button(1000).getAsBoolean()));
+
+                cam.cameraStream();
+
+                Command driveFieldOrientedAnglularVelocity = drivebase.driveCommand(
+                                () -> -1 * MathUtil.applyDeadband(driveXbox.getLeftY(),
+                                                OperatorConstants.LEFT_Y_DEADBAND),
+                                () -> -1 * MathUtil.applyDeadband(driveXbox.getLeftX(),
+                                                OperatorConstants.LEFT_X_DEADBAND),
+                                () -> -1 * driveXbox.getRightX() * 0.7);
+
+                // Command driveFieldOrientedDirectAngle = drivebase.driveCommand(
+                // () -> MathUtil.applyDeadband(driveXbox.getLeftY(),
+                // OperatorConstants.LEFT_Y_DEADBAND),
+                // () -> MathUtil.applyDeadband(driveXbox.getLeftX(),
+                // OperatorConstants.LEFT_X_DEADBAND),
+                // () -> driveXbox.getRightX(), () -> driveXbox.getRightY());
+
+                drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
+>>>>>>> auto
 
                 configureBindings();
+
+                // autoChooser = AutoBuilder.buildAutoChooser("New Auto");
+                // SmartDashboard.putData("Auto Chooser", autoChooser);
         }
 
         /**
@@ -109,7 +167,23 @@ public class RobotContainer {
                 // OperatorConstants.LEFT_Y_DEADBAND),
                 // () -> MathUtil.applyDeadband(-1 * driveXbox.getLeftX(),
                 // OperatorConstants.LEFT_X_DEADBAND)));
+<<<<<<< HEAD
                 // driveXbox.a().whileTrue(drivebase.resetOdometryCommand());
+=======
+                // driveXbox.a().whileTrue(new LookAtTarget(drivebase));
+                // debugJoystick.button(2).whileTrue(new AutoCommand(Shooter,
+                // Pivot).rotatePivotInDegrees(45));
+
+                // controllerXbox.a().whileTrue(Shooter.runRedlineMotor(0.1));
+                // controllerXbox.b().whileTrue(Shooter.runRedlineMotor(0.3));
+                // controllerXbox.x().whileTrue(Shooter.runRedlineMotor(0.7));
+                // controllerXbox.y().whileTrue(Shooter.runRedlineMotor(0.9));
+
+                // neo -0.35
+                // redline -0.7
+
+                driveXbox.rightBumper().onTrue(drivebase.zeroGyroCommand());
+>>>>>>> auto
         }
 
         /**
@@ -119,7 +193,12 @@ public class RobotContainer {
          */
         public Command getAutonomousCommand() {
                 // An example command will be run in autonomous
+<<<<<<< HEAD
                 // return drivebase.getAutonomousCommand("New New Auto");
+=======
+                // return drivebase.getAutonomousCommand("New Auto");
+                // return autoChooser.getSelected();
+>>>>>>> auto
                 return null;
         }
 }

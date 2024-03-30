@@ -51,7 +51,7 @@ public class SwerveSubsystem extends SubsystemBase {
   /**
    * Maximum speed of the robot in meters per second, used to limit acceleration.
    */
-  public double maximumSpeed = Units.feetToMeters(14.5);
+  public double maximumSpeed = Units.feetToMeters(0.5);
   SwerveDrivePoseEstimator poseEstimator;
   private final Field2d field = new Field2d();
 
@@ -181,6 +181,12 @@ public class SwerveSubsystem extends SubsystemBase {
     );
   }
 
+  public void getAxisFromInput(double x, double y) {
+    double scalar = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+    double newX = Math.sin(Math.pow(scalar, 3));
+    double newY = Math.sin(Math.pow(scalar, 3));
+  }
+
   /**
    * Command to drive the robot using translative values and heading as a
    * setpoint.
@@ -195,7 +201,7 @@ public class SwerveSubsystem extends SubsystemBase {
    */
   public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier headingX,
       DoubleSupplier headingY) {
-    // swerveDrive.setHeadingCorrection(true); // Normally you would want heading
+    swerveDrive.setHeadingCorrection(true); // Normally you would want heading
     // correction for this kind of control.
     return run(() -> {
       double xInput = Math.pow(translationX.getAsDouble(), 3); // Smooth controll out
@@ -225,8 +231,9 @@ public class SwerveSubsystem extends SubsystemBase {
       DoubleSupplier angularRotationX) {
     return run(() -> {
       // Make the robot move
-      swerveDrive.drive(new Translation2d(Math.pow(translationX.getAsDouble(), 3) * swerveDrive.getMaximumVelocity(),
-          Math.pow(translationY.getAsDouble(), 3) * swerveDrive.getMaximumVelocity()),
+      swerveDrive.drive(
+          new Translation2d(Math.pow(translationX.getAsDouble(), 3) * swerveDrive.getMaximumVelocity() * 0.33,
+              Math.pow(translationY.getAsDouble(), 3) * swerveDrive.getMaximumVelocity() * 0.33),
           Math.pow(angularRotationX.getAsDouble(), 3) * swerveDrive.getMaximumAngularVelocity(),
           true,
           false);
@@ -363,6 +370,10 @@ public class SwerveSubsystem extends SubsystemBase {
    */
   public void zeroGyro() {
     swerveDrive.zeroGyro();
+  }
+
+  public Command zeroGyroCommand() {
+    return runOnce(() -> swerveDrive.zeroGyro());
   }
 
   /**

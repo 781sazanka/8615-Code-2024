@@ -23,10 +23,10 @@ public class Shooter extends SubsystemBase {
     final TalonFX motorFollower = new TalonFX(4, "rio");
 
     // VictorSPX redlineMotor = new VictorSPX(40);
-    final CANSparkMax sparkMaxFeederMotor = new CANSparkMax(50, MotorType.kBrushless);
-    final CANSparkMax sparkMaxIntakeMotor = new CANSparkMax(51, MotorType.kBrushless);
+    final CANSparkMax sparkMaxFeederMotor = new CANSparkMax(51, MotorType.kBrushless);
+    final CANSparkMax sparkMaxIntakeMotor = new CANSparkMax(50, MotorType.kBrushless);
     final VictorSPX redlineController = new VictorSPX(29);
-    final DigitalInput sensorInput = new DigitalInput(1);
+    final DigitalInput sensorInput = new DigitalInput(9);
 
     final ControlMode mode = com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput;
     int count = 0;
@@ -82,10 +82,11 @@ public class Shooter extends SubsystemBase {
         SmartDashboard.putNumber("[Shooter] feeder motor speed", sparkMaxFeederMotor.getEncoder().getVelocity());
         SmartDashboard.putNumber("[Shooter] intake redline motor speed", redlineController.getMotorOutputPercent());
         SmartDashboard.putBoolean("[Shooter] shooter is clear", isNoteInFeeder());
+        SmartDashboard.putBoolean("[Shooter]", sensorInput.get());
     }
 
     public void shoot(double desiredShooterVelocity, double feederOutput) {
-        double acceptableVelocityTolerance = 0.5;
+        double acceptableVelocityTolerance = 10;
         runShooterMotor(desiredShooterVelocity);
         if (getShooterVelocity() + acceptableVelocityTolerance >= desiredShooterVelocity)
             runFeederMotor(feederOutput);
@@ -93,9 +94,9 @@ public class Shooter extends SubsystemBase {
 
     public void getNote(double feederOutput, double intakeSparkMaxOutput, double intakeRedlineOutput) {
         // boolean isNoteInFeeder = isNoteInFeeder();
+
         // if (isNoteInFeeder == false) {
         runFeederMotor(feederOutput);
-        runIntakeMotor(intakeSparkMaxOutput, intakeRedlineOutput);
         sparkMaxIntakeMotor.set(intakeSparkMaxOutput);
         redlineController.set(mode, intakeRedlineOutput);
         // } else {

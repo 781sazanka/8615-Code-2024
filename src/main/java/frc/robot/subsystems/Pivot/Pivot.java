@@ -10,6 +10,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -19,6 +20,7 @@ public class Pivot extends SubsystemBase {
     final TalonFX motorLeader = new TalonFX(32, "rio");
     final TalonFX motorFollower = new TalonFX(30, "rio");
     final DutyCycleEncoder dutyCycleEncoder;
+    final DigitalInput limitSwitch = new DigitalInput(2);
 
     double maxEncoderValue = 0; // lowest position
     double minEncoderValue = -85; // highest position
@@ -28,6 +30,8 @@ public class Pivot extends SubsystemBase {
     double kD = 1.3;
 
     private PIDController rotationPID = new PIDController(kP, kI, kD);
+
+    double lowestAbsoluteEncoderValue = 0.70;
 
     public Pivot() {
         int dioChannel = 0;
@@ -76,8 +80,10 @@ public class Pivot extends SubsystemBase {
 
     public void down() {
         double currentAbsoluteEncoderPosition = dutyCycleEncoder.getAbsolutePosition();
-        if (0.68 <= currentAbsoluteEncoderPosition) {
+        if (lowestAbsoluteEncoderValue + 0.02 <= currentAbsoluteEncoderPosition) {
             motorLeader.set(0.2);
+        } else {
+            motorLeader.set(0);
         }
     }
 
@@ -106,6 +112,8 @@ public class Pivot extends SubsystemBase {
     public void periodic() {
         putData();
 
-        double currentPosition = getCurrentPosition();
+        // if (limitSwitch.get() == true) {
+        // lowestAbsoluteEncoderValue = dutyCycleEncoder.getAbsolutePosition();
+        // }
     }
 }

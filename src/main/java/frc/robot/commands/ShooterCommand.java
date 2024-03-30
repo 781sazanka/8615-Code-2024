@@ -39,7 +39,7 @@ public class ShooterCommand extends Command {
     @Override
     public void execute() {
         if (button1.get()) {
-            shooter.shoot(30, -0.5);
+            shooter.shoot(50, -0.9);
         }
 
         else if (button2.get()) {
@@ -47,11 +47,11 @@ public class ShooterCommand extends Command {
         }
 
         else if (button3.get()) {
-            shooter.getNote(-0.3, 0.5, 0);
+            // shooter.getNote(-0.3, -0.4, -0);
         }
 
         else if (button4.get()) {
-            shooter.getNote(0.3, -0.7, -0);
+            // shooter.getNote(-0.3, 0.5, 0);
         }
 
         else {

@@ -25,14 +25,6 @@ public class Pivot extends SubsystemBase {
     double maxEncoderValue = 0; // lowest position
     double minEncoderValue = -85; // highest position
 
-    double kP = 8;
-    double kI = 0;
-    double kD = 1.3;
-
-    private PIDController rotationPID = new PIDController(kP, kI, kD);
-
-    double lowestAbsoluteEncoderValue = 0.70;
-
     public Pivot() {
         int dioChannel = 0;
         dutyCycleEncoder = new DutyCycleEncoder(dioChannel);
@@ -43,7 +35,7 @@ public class Pivot extends SubsystemBase {
 
         // in init function, set slot 0 gains
         var slot0Configs = new Slot0Configs();
-        slot0Configs.kP = 4; // An error of 0.5 rotations results in 12 V output
+        slot0Configs.kP = 2; // An error of 0.5 rotations results in 12 V output
         slot0Configs.kI = 0; // no output for integrated error
         slot0Configs.kD = 0.1; // A velocity of 1 rps results in 0.1 V output
 
@@ -80,11 +72,17 @@ public class Pivot extends SubsystemBase {
 
     public void down() {
         double currentAbsoluteEncoderPosition = dutyCycleEncoder.getAbsolutePosition();
-        if (lowestAbsoluteEncoderValue + 0.02 <= currentAbsoluteEncoderPosition) {
+        if (0.68 <= currentAbsoluteEncoderPosition) {
             motorLeader.set(0.2);
         } else {
             motorLeader.set(0);
         }
+    }
+
+    public void goToSpecificPosition(double position) {
+        double safePosition = MathUtil.clamp(position, -10, -70);
+        final PositionVoltage m_request = new PositionVoltage(safePosition).withSlot(0);
+        motorLeader.setControl(m_request);
     }
 
     public double getCurrentPosition() {

@@ -9,6 +9,7 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.controls.*;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
@@ -24,13 +25,15 @@ public class Shooter extends SubsystemBase {
 
     // VictorSPX redlineMotor = new VictorSPX(40);
     final CANSparkMax sparkMaxFeederMotor = new CANSparkMax(51, MotorType.kBrushless);
-    final CANSparkMax sparkMaxIntakeMotor = new CANSparkMax(50, MotorType.kBrushless);
+    final CANSparkMax sparkMaxIntakeMotor = new CANSparkMax(52, MotorType.kBrushless);
     final VictorSPX redlineController = new VictorSPX(29);
     final DigitalInput sensorInput = new DigitalInput(9);
 
     final ControlMode mode = com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput;
     int count = 0;
     boolean feederCleared = false;
+    int getSensorCount = 0;
+    boolean feederLoaded = false;
 
     public Shooter() {
         sparkMaxFeederMotor.restoreFactoryDefaults();
@@ -38,6 +41,9 @@ public class Shooter extends SubsystemBase {
 
         motorLeader.clearStickyFaults(0);
         motorFollower.clearStickyFaults(0);
+
+        motorLeader.setNeutralMode(NeutralModeValue.Brake);
+        motorFollower.setNeutralMode(NeutralModeValue.Brake);
 
         // in init function, set slot 0 gains
         var slot0Configs = new Slot0Configs();
@@ -87,16 +93,21 @@ public class Shooter extends SubsystemBase {
 
     public void shoot(double desiredShooterVelocity, double feederOutput) {
         double acceptableVelocityTolerance = 10;
+        getSensorCount = 0;
         runShooterMotor(desiredShooterVelocity);
         if (getShooterVelocity() + acceptableVelocityTolerance >= desiredShooterVelocity)
             runFeederMotor(feederOutput);
+
+        feederLoaded = false;
     }
 
     public void getNote(double feederOutput, double intakeSparkMaxOutput, double intakeRedlineOutput) {
         // boolean isNoteInFeeder = isNoteInFeeder();
 
         // if (isNoteInFeeder == false) {
+        // if (count <= 3) {
         runFeederMotor(feederOutput);
+        // }
         sparkMaxIntakeMotor.set(intakeSparkMaxOutput);
         redlineController.set(mode, intakeRedlineOutput);
         // } else {
@@ -128,14 +139,15 @@ public class Shooter extends SubsystemBase {
     public void periodic() {
         putData();
 
-        if (isNoteInFeeder() == false) {
-            count++;
-        } else {
+        if (feederLoaded == false) {
             count = 0;
         }
 
-        if (count >= 15) { // 0.3 seconds
-            feederCleared = true;
+        if (sensorInput.get() == false) {
+            feederLoaded = true;
+            count += 1;
         }
+
+        SmartDashboard.putBoolean("feeder loaded", feederLoaded);
     }
 }

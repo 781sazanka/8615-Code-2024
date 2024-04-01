@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 
 import java.util.function.Supplier;
 import frc.robot.subsystems.Pivot.Pivot;
+import frc.robot.subsystems.Vision.LimelightHelpers;
 
 public class PivotCommand extends Command {
     private final Supplier<Boolean> button1;
@@ -15,7 +16,7 @@ public class PivotCommand extends Command {
     private final Supplier<Boolean> button3;
     private final Supplier<Boolean> button4;
     private final Pivot pivot;
-    private boolean buttonEverPressed = false;
+    public boolean buttonEverPressed = false;
     double position;
     boolean lastMovementWasUp = false;
     boolean lastMovementWasDown = false;
@@ -57,14 +58,21 @@ public class PivotCommand extends Command {
             buttonEverPressed = true;
             lastMovementWasDown = true;
         } else if (button3.get()) {
-            // pivot.setPositionFromDegrees(60);
-            // pivot.goToSpecificPosition(-20);
+            // if (LimelightHelpers.getTV("limelight")) {
+            // double ty = LimelightHelpers.getTY("limelight");
+            // double d1 = 1.78 - 0.1 / Math.tan(ty + 30);
+            // double d2 = 0.07;
+            // double h = 0.30;
+            // double theta = (d1 + d2) / (1.78 - h);
+            // double targetPosition = -(Math.toDegrees(Math.atan(theta)) - 38) * 40 / 52;
+            // pivot.setPosition(targetPosition);
+            // }
         } else {
             // pivot.setPosition(pivot.currentPosition());
             if (buttonEverPressed) {
                 // pivot.setPosition(position);
                 // pivot.stop();
-                if (0.72 <= pivot.getCurrentAbsoluteEncoderValue()) {
+                if (pivot.lowestAbsoluteEncoderValue <= pivot.getCurrentAbsoluteEncoderValue()) {
                     pivot.setPosition(position);
                 } else {
                     pivot.stop();
@@ -72,6 +80,8 @@ public class PivotCommand extends Command {
             } else {
                 pivot.stop();
             }
+
+            // pivot.getTargetAngle();
         }
     }
 

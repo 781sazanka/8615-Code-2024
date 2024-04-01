@@ -13,17 +13,21 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.Vision.LimelightHelpers;
 
 public class Pivot extends SubsystemBase {
 
     final TalonFX motorLeader = new TalonFX(32, "rio");
     final TalonFX motorFollower = new TalonFX(30, "rio");
     final DutyCycleEncoder dutyCycleEncoder;
-    final DigitalInput limitSwitch = new DigitalInput(2);
+    final DigitalInput limitSwitch = new DigitalInput(8);
 
-    double maxEncoderValue = 0; // lowest position
-    double minEncoderValue = -85; // highest position
+    double maxEncoderValue = -1; // lowest position
+    double minEncoderValue = -80; // highest position
+
+    public double lowestAbsoluteEncoderValue = 0.595;
 
     public Pivot() {
         int dioChannel = 0;
@@ -65,15 +69,15 @@ public class Pivot extends SubsystemBase {
 
     public void up() {
         double currentAbsoluteEncoderPosition = dutyCycleEncoder.getAbsolutePosition();
-        if (currentAbsoluteEncoderPosition < 0.95) {
-            motorLeader.set(-0.2);
+        if (dutyCycleEncoder.isConnected() == true && currentAbsoluteEncoderPosition < 0.84) {
+            motorLeader.set(-0.3);
         }
     }
 
     public void down() {
         double currentAbsoluteEncoderPosition = dutyCycleEncoder.getAbsolutePosition();
-        if (0.68 <= currentAbsoluteEncoderPosition) {
-            motorLeader.set(0.2);
+        if (dutyCycleEncoder.isConnected() == true && lowestAbsoluteEncoderValue <= currentAbsoluteEncoderPosition) {
+            motorLeader.set(0.3);
         } else {
             motorLeader.set(0);
         }
@@ -99,6 +103,8 @@ public class Pivot extends SubsystemBase {
         SmartDashboard.putNumber("[Pivot] top motor position", motorLeader.getPosition().getValueAsDouble());
         SmartDashboard.putNumber("[Pivot] bottom motor position", motorFollower.getVelocity().getValueAsDouble());
         SmartDashboard.putNumber("[Pivot] encoder", dutyCycleEncoder.getAbsolutePosition());
+        SmartDashboard.putBoolean("[Pivot] limit switch", limitSwitch.get());
+        SmartDashboard.putNumber("[Pivot] lowest position value", lowestAbsoluteEncoderValue);
     }
 
     public void stop() {
@@ -110,8 +116,8 @@ public class Pivot extends SubsystemBase {
     public void periodic() {
         putData();
 
-        // if (limitSwitch.get() == true) {
-        // lowestAbsoluteEncoderValue = dutyCycleEncoder.getAbsolutePosition();
-        // }
+        if (limitSwitch.get() == true) {
+            lowestAbsoluteEncoderValue = dutyCycleEncoder.getAbsolutePosition() + 0.002;
+        }
     }
 }

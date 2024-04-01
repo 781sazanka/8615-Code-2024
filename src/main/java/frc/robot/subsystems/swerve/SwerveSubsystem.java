@@ -20,6 +20,8 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -215,6 +217,62 @@ public class SwerveSubsystem extends SubsystemBase {
     });
   }
 
+  public double calcY(DoubleSupplier translationX, DoubleSupplier translationY) {
+    double scalar = Math
+        .pow(Math.sqrt(Math.pow(translationX.getAsDouble(), 2) + Math.pow(translationY.getAsDouble(), 2)), 3);
+
+    double returnValue;
+    double theta;
+    if (translationX.getAsDouble() == 0) {
+      if (translationY.getAsDouble() > 0) {
+        theta = Math.PI / 2;
+      } else if (translationY.getAsDouble() < 0) {
+        theta = -Math.PI / 2;
+      } else {
+        theta = 0;
+      }
+    } else {
+      theta = Math.atan(translationY.getAsDouble() / translationX.getAsDouble());
+    }
+
+    if (translationX.getAsDouble() > 0) {
+      returnValue = scalar * Math.cos(theta);
+    } else {
+      returnValue = -1 * scalar * Math.cos(theta);
+    }
+    return returnValue;
+  }
+
+  public double calcX(DoubleSupplier translationX, DoubleSupplier translationY) {
+    double scalar = Math
+        .pow(Math.sqrt(Math.pow(translationX.getAsDouble(), 2) + Math.pow(translationY.getAsDouble(), 2)), 3);
+    double returnValue;
+    double theta;
+    if (translationX.getAsDouble() == 0) {
+      if (translationY.getAsDouble() > 0) {
+        theta = Math.PI / 2;
+      } else if (translationY.getAsDouble() < 0) {
+        theta = -Math.PI / 2;
+      } else {
+        theta = 0;
+      }
+    } else {
+      theta = Math.atan(translationY.getAsDouble() / translationX.getAsDouble());
+    }
+
+    if (translationX.getAsDouble() > 0) {
+      returnValue = scalar * Math.sin(theta);
+    } else {
+      returnValue = -1 * scalar * Math.sin(theta);
+    }
+
+    if (translationX.getAsDouble() == 0) {
+      return returnValue * -1;
+    } else {
+      return returnValue;
+    }
+  }
+
   /**
    * Command to drive the robot using translative values and heading as angular
    * velocity.
@@ -229,11 +287,18 @@ public class SwerveSubsystem extends SubsystemBase {
    */
   public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY,
       DoubleSupplier angularRotationX) {
+
     return run(() -> {
       // Make the robot move
       swerveDrive.drive(
-          new Translation2d(Math.pow(translationX.getAsDouble(), 3) * swerveDrive.getMaximumVelocity() * 0.33,
-              Math.pow(translationY.getAsDouble(), 3) * swerveDrive.getMaximumVelocity() * 0.33),
+          new Translation2d(
+              calcY(translationX, translationY) * swerveDrive.getMaximumVelocity() * 0.33,
+              calcX(translationX, translationY) * swerveDrive.getMaximumVelocity() * 0.33),
+
+          // new Translation2d(Math.pow(translationX.getAsDouble(), 3) *
+          // swerveDrive.getMaximumVelocity() * 0.33,
+          // Math.pow(translationY.getAsDouble(), 3) * swerveDrive.getMaximumVelocity() *
+          // 0.33),
           Math.pow(angularRotationX.getAsDouble(), 3) * swerveDrive.getMaximumAngularVelocity(),
           true,
           false);
@@ -271,6 +336,7 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   public void updatePoseEstimator() {
+    NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
     LimelightHelpers.PoseEstimate limelightMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
     // if (limelightMeasurement.tagCount >= 2) {
     poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
@@ -284,7 +350,7 @@ public class SwerveSubsystem extends SubsystemBase {
     field.setRobotPose(poseEstimator.getEstimatedPosition());
 
     SmartDashboard.putNumber("target angle",
-        Math.toDegrees(LimelightHelpers.getTargetPose3d_RobotSpace("limelight").getRotation().getAngle()));
+        Math.toDegrees(LimelightHelpers.getCameraPose3d_TargetSpace("limelight").getRotation().getZ()));
   }
 
   /**
@@ -308,6 +374,9 @@ public class SwerveSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     updatePoseEstimator();
+
+    SmartDashboard.putNumber("rotation",
+        Math.toDegrees(LimelightHelpers.getTargetPose3d_CameraSpace("limelight").getRotation().getZ()));
   }
 
   @Override
@@ -505,5 +574,22 @@ public class SwerveSubsystem extends SubsystemBase {
   public void rotateToAngle(double rotationInDegrees) {
     swerveDrive.drive(getTargetSpeeds(0, 0,
         Rotation2d.fromDegrees(rotationInDegrees)));
+  }
+
+  public void stopSwerve() {
+    swerveDrive.drive(getTargetSpeeds(0, 0,
+        Rotation2d.fromDegrees(swerveDrive.getOdometryHeading().getDegrees())));
+  }
+
+  public Command rotateDriveBaseToSpeakerCommand() {
+    Command returnCommand;
+    if (LimelightHelpers.getTV("limelight")) {
+      double angle = Math.toDegrees(LimelightHelpers.getCameraPose3d_TargetSpace("limelight").getRotation().getZ());
+      returnCommand = runEnd(() -> rotateToAngle(swerveDrive.getOdometryHeading().getDegrees() - angle),
+          () -> stopSwerve());
+    } else {
+      returnCommand = runOnce(() -> rotateToAngle(swerveDrive.getOdometryHeading().getDegrees()));
+    }
+    return returnCommand;
   }
 }

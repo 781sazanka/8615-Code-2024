@@ -92,10 +92,10 @@ public class RobotContainer {
 
                 // Pivot.setDefaultCommand(
                 // new PivotCommand(Pivot,
-                // () -> driveXbox.rightBumper().getAsBoolean(),
-                // () -> driveXbox.leftBumper().getAsBoolean(),
-                // () -> driveXbox.leftTrigger().getAsBoolean(),
-                // () -> driveXbox.button(1000).getAsBoolean()));
+                // () -> controllerXbox.rightBumper().getAsBoolean(),
+                // () -> controllerXbox.leftBumper().getAsBoolean(),
+                // () -> controllerXbox.rightTrigger().getAsBoolean(),
+                // () -> controllerXbox.button(1000).getAsBoolean()));
 
                 cam.cameraStream();
 
@@ -106,12 +106,12 @@ public class RobotContainer {
                                                 OperatorConstants.LEFT_X_DEADBAND),
                                 () -> -1 * driveXbox.getRightX() * 0.7);
 
-                // Command driveFieldOrientedDirectAngle = drivebase.driveCommand(
-                // () -> MathUtil.applyDeadband(driveXbox.getLeftY(),
-                // OperatorConstants.LEFT_Y_DEADBAND),
-                // () -> MathUtil.applyDeadband(driveXbox.getLeftX(),
-                // OperatorConstants.LEFT_X_DEADBAND),
-                // () -> driveXbox.getRightX(), () -> driveXbox.getRightY());
+                Command driveFieldOrientedDirectAngle = drivebase.driveCommand(
+                                () -> MathUtil.applyDeadband(driveXbox.getLeftY(),
+                                                OperatorConstants.LEFT_Y_DEADBAND),
+                                () -> MathUtil.applyDeadband(driveXbox.getLeftX(),
+                                                OperatorConstants.LEFT_X_DEADBAND),
+                                () -> driveXbox.getRightX(), () -> driveXbox.getRightY());
 
                 drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
 
@@ -152,8 +152,8 @@ public class RobotContainer {
 
                 // neo -0.35
                 // redline -0.7
-
-                driveXbox.rightBumper().onTrue(drivebase.zeroGyroCommand());
+                driveXbox.rightBumper().whileTrue(drivebase.rotateDriveBaseToSpeakerCommand());
+                driveXbox.leftBumper().onTrue(drivebase.zeroGyroCommand());
         }
 
         /**

@@ -39,19 +39,19 @@ public class ShooterCommand extends Command {
     @Override
     public void execute() {
         if (button1.get()) {
-            shooter.shoot(50, -0.9);
+            shooter.shoot(50, -0.6);
         }
 
         else if (button2.get()) {
-            shooter.shoot(10, -0.5);
+            shooter.shoot(10, -0.3);
         }
 
         else if (button3.get()) {
-            // shooter.getNote(-0.3, -0.4, -0);
+            shooter.getNote(-0.3, -0.7, 0);
         }
 
         else if (button4.get()) {
-            // shooter.getNote(-0.3, 0.5, 0);
+            shooter.getNote(0.15, 0.7, 0);
         }
 
         else {

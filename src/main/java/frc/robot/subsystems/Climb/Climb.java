@@ -17,24 +17,29 @@ import frc.robot.Constants;
 
 public class Climb extends SubsystemBase {
 
-    final CANSparkMax leaderMotor = new CANSparkMax(50, MotorType.kBrushless);
-    final CANSparkMax followerMotor = new CANSparkMax(51, MotorType.kBrushless);
+    final CANSparkMax leaderMotor = new CANSparkMax(52, MotorType.kBrushless);
+    final CANSparkMax followerMotor = new CANSparkMax(54, MotorType.kBrushless);
     private RelativeEncoder leaderEncoder = leaderMotor.getEncoder();
-    private RelativeEncoder followerEencoder = followerMotor.getEncoder();
+    private RelativeEncoder followerEncoder = followerMotor.getEncoder();
     private boolean reachedTheLowestPoint = false;
+    private boolean leaderCannnotMove = false;
+    private boolean followerCannotMove = false;
 
     public Climb() {
         leaderMotor.restoreFactoryDefaults();
         leaderMotor.setIdleMode(IdleMode.kBrake);
         followerMotor.restoreFactoryDefaults();
-        followerMotor.restoreFactoryDefaults();
+        followerMotor.setIdleMode(IdleMode.kBrake);
         // followerMotor.follow(leaderMotor, true);
     }
 
     public void putPosition() {
         SmartDashboard.putNumber("[Climb] leader position", leaderEncoder.getPosition());
-        SmartDashboard.putNumber("[Climb] follower position", followerEencoder.getPosition());
-        SmartDashboard.putBoolean("[Climb] reached the lowest", reachedTheLowestPoint);
+        SmartDashboard.putNumber("[Climb] follower position", followerEncoder.getPosition());
+        // SmartDashboard.putBoolean("[Climb] reached the lowest",
+        // reachedTheLowestPoint);
+        SmartDashboard.putBoolean("[Climb] leader lowsest", leaderCannnotMove);
+        SmartDashboard.putBoolean("[Climb] follower lowsest", followerCannotMove);
     }
 
     public void set(double output) {
@@ -59,24 +64,41 @@ public class Climb extends SubsystemBase {
         leaderMotor.set(output);
         if (resetEncoderPosition) {
             leaderEncoder.setPosition(0);
-            followerEencoder.setPosition(0);
+            followerEncoder.setPosition(0);
         }
     }
 
-    public void climberUp(double output) {
-        double topLeaderPosition = 0;
-        double topFollowerPosition = 0;
-        double offset = 0;
-        if (leaderEncoder.getPosition() <= topLeaderPosition + offset) {
-            set(output);
-        } else {
-            leaderMotor.stopMotor();
+    public void climberUp(double absoluteOutput) {
+        // double topLeaderPosition = 0;
+        // double topFollowerPosition = 0;
+        // double offset = 0;
+        // if (leaderEncoder.getPosition() <= topLeaderPosition + offset) {
+        // set(output);
+        // } else {
+        // leaderMotor.stopMotor();
+        // }
+
+        // if (followerEencoder.getPosition() <= topFollowerPosition + offset) {
+        // set(output);
+        // } else {
+        // followerMotor.stopMotor();
+        // }
+        if (leaderEncoder.getPosition() <= 40) {
+            leaderMotor.set(absoluteOutput);
         }
 
-        if (followerEencoder.getPosition() <= topFollowerPosition + offset) {
-            set(output);
-        } else {
-            followerMotor.stopMotor();
+        if (followerEncoder.getPosition() >= -40) {
+            followerMotor.set(-1 * absoluteOutput);
+        }
+    }
+
+    public void climberDown(double absoluteOutput) {
+        if (leaderEncoder.getPosition() >= 1.5) {
+            leaderMotor.set(-1 * absoluteOutput);
+        }
+
+        if (followerEncoder.getPosition() <= -1.5) {
+            followerMotor.set(absoluteOutput);
         }
     }
 
@@ -88,9 +110,5 @@ public class Climb extends SubsystemBase {
     @Override
     public void periodic() {
         putPosition();
-    }
-
-    public Command moveToTheLowest() {
-        return run(() -> setWithEncoderPositionReset(0.2, true)).withTimeout(2);
     }
 }

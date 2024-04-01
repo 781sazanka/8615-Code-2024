@@ -16,9 +16,9 @@
           "data": {
             "commands": [
               {
-                "type": "path",
+                "type": "named",
                 "data": {
-                  "pathName": "New Path"
+                  "name": "shootNote"
                 }
               }
             ]

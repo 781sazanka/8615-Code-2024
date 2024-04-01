@@ -27,7 +27,7 @@ public class AutoCommand {
     }
 
     public Command score() {
-        return Commands.run(() -> shooter.shoot(0, 0), shooter).until(() -> shooter.hasNoteShot());
+        return Commands.run(() -> shooter.shoot(50, -0.7), shooter).withTimeout(1);
     }
 
     public Command rotatePivot(double angle) {

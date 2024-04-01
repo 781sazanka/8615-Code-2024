@@ -20,13 +20,12 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Shooter extends SubsystemBase {
 
-    final TalonFX motorLeader = new TalonFX(1, "rio");
-    final TalonFX motorFollower = new TalonFX(4, "rio");
+    final TalonFX motorLeader = new TalonFX(4, "rio");
+    final TalonFX motorFollower = new TalonFX(1, "rio");
 
-    // VictorSPX redlineMotor = new VictorSPX(40);
     final CANSparkMax sparkMaxFeederMotor = new CANSparkMax(51, MotorType.kBrushless);
     final CANSparkMax sparkMaxIntakeMotor = new CANSparkMax(52, MotorType.kBrushless);
-    final VictorSPX redlineController = new VictorSPX(29);
+    final CANSparkMax sparkMaxIntakeFeederMotor = new CANSparkMax(54, MotorType.kBrushless);
     final DigitalInput sensorInput = new DigitalInput(9);
 
     final ControlMode mode = com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput;
@@ -34,22 +33,23 @@ public class Shooter extends SubsystemBase {
     boolean feederCleared = false;
     int getSensorCount = 0;
     boolean feederLoaded = false;
+    int topSpeedCounter = 0;
+    boolean movingMode = false;
+    boolean stopState = false;
 
     public Shooter() {
         sparkMaxFeederMotor.restoreFactoryDefaults();
         sparkMaxIntakeMotor.restoreFactoryDefaults();
+        sparkMaxIntakeFeederMotor.restoreFactoryDefaults();
 
         motorLeader.clearStickyFaults(0);
         motorFollower.clearStickyFaults(0);
-
-        motorLeader.setNeutralMode(NeutralModeValue.Brake);
-        motorFollower.setNeutralMode(NeutralModeValue.Brake);
 
         // in init function, set slot 0 gains
         var slot0Configs = new Slot0Configs();
         slot0Configs.kS = 0.05; // Add 0.05 V output to overcome static friction
         slot0Configs.kV = 0.12; // A velocity target of 1 rps results in 0.12 V output
-        slot0Configs.kP = 0.11; // An error of 1 rps results in 0.11 V output
+        slot0Configs.kP = 0.25; // An error of 1 rps results in 0.11 V output
         slot0Configs.kI = 0; // no output for integrated error
         slot0Configs.kD = 0; // no output for error derivative
 
@@ -62,7 +62,7 @@ public class Shooter extends SubsystemBase {
         motorFollower.stopMotor();
         sparkMaxFeederMotor.stopMotor();
         sparkMaxIntakeMotor.stopMotor();
-        redlineController.set(mode, 0);
+        sparkMaxIntakeFeederMotor.stopMotor();
     }
 
     public void runShooterMotor(double velocity) {
@@ -76,9 +76,9 @@ public class Shooter extends SubsystemBase {
         sparkMaxFeederMotor.set(output);
     }
 
-    public void runIntakeMotor(double sparkMaxOutput, double redlineOutput) {
+    public void runIntakeMotor(double sparkMaxOutput, double sparkMaxIntakeFeederOutput) {
         sparkMaxIntakeMotor.set(sparkMaxOutput);
-        redlineController.set(mode, redlineOutput);
+        sparkMaxIntakeFeederMotor.set(sparkMaxIntakeFeederOutput);
     }
 
     public void putData() {
@@ -86,37 +86,46 @@ public class Shooter extends SubsystemBase {
         SmartDashboard.putNumber("[Shooter] bottom motor speed", motorFollower.getVelocity().getValueAsDouble());
         SmartDashboard.putNumber("[Shooter] intake NEO motor speed", sparkMaxIntakeMotor.getEncoder().getVelocity());
         SmartDashboard.putNumber("[Shooter] feeder motor speed", sparkMaxFeederMotor.getEncoder().getVelocity());
-        SmartDashboard.putNumber("[Shooter] intake redline motor speed", redlineController.getMotorOutputPercent());
         SmartDashboard.putBoolean("[Shooter] shooter is clear", isNoteInFeeder());
         SmartDashboard.putBoolean("[Shooter]", sensorInput.get());
     }
 
     public void shoot(double desiredShooterVelocity, double feederOutput) {
-        double acceptableVelocityTolerance = 10;
-        getSensorCount = 0;
+        double acceptableVelocityTolerance = 2;
+
+        // runShooterMotor(desiredShooterVelocity * 0.6);
+        // if (getShooterVelocity() + acceptableVelocityTolerance >=
+        // desiredShooterVelocity * 0.6) {
         runShooterMotor(desiredShooterVelocity);
-        if (getShooterVelocity() + acceptableVelocityTolerance >= desiredShooterVelocity)
+        if (getShooterVelocity() + acceptableVelocityTolerance >= desiredShooterVelocity) {
+
+            // if (topSpeedCounter >= 5) {
             runFeederMotor(feederOutput);
+            // }
+            // }
+
+        }
 
         feederLoaded = false;
+
     }
 
-    public void getNote(double feederOutput, double intakeSparkMaxOutput, double intakeRedlineOutput) {
+    public void getNote(double feederOutput, double intakeSparkMaxOutput, double intakeFeederSparkMaxOutput) {
         // boolean isNoteInFeeder = isNoteInFeeder();
 
         // if (isNoteInFeeder == false) {
-        // if (count <= 3) {
+        // if (stopState == false) {
         runFeederMotor(feederOutput);
         // }
         sparkMaxIntakeMotor.set(intakeSparkMaxOutput);
-        redlineController.set(mode, intakeRedlineOutput);
+        sparkMaxIntakeFeederMotor.set(intakeFeederSparkMaxOutput);
         // } else {
         // stop();
         // }
     }
 
-    public Command getNoteCommand(double feederOutput, double intakeSparkMaxOutput, double intakeRedlineOutput) {
-        return run(() -> getNote(feederOutput, intakeSparkMaxOutput, intakeRedlineOutput));
+    public Command getNoteCommand(double feederOutput, double intakeSparkMaxOutput, double intakeFeederSparkMaxOutput) {
+        return run(() -> getNote(feederOutput, intakeSparkMaxOutput, intakeFeederSparkMaxOutput));
     }
 
     public double getShooterVelocity() {
@@ -131,10 +140,6 @@ public class Shooter extends SubsystemBase {
         return feederCleared;
     }
 
-    public Command runRedlineMotor(double output) {
-        return runEnd(() -> redlineController.set(mode, output), () -> redlineController.set(mode, 0));
-    }
-
     @Override
     public void periodic() {
         putData();
@@ -143,11 +148,26 @@ public class Shooter extends SubsystemBase {
             count = 0;
         }
 
-        if (sensorInput.get() == false) {
+        if (sensorInput.get() == false && count == 0) {
             feederLoaded = true;
             count += 1;
         }
 
+        if (sensorInput.get() == true && feederLoaded == true) {
+            movingMode = true;
+        }
+
+        if (sensorInput.get() == false && movingMode == true) {
+            stopState = true;
+
+        }
+
         SmartDashboard.putBoolean("feeder loaded", feederLoaded);
+
+        if (getShooterVelocity() + 2 >= 50) {
+            topSpeedCounter += 1;
+        } else {
+            topSpeedCounter = 0;
+        }
     }
 }

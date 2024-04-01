@@ -38,7 +38,6 @@ public class ClimbExample extends Command {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        climb.moveToTheLowest();
     }
 
     // Called every time the scheduler runs while the command is scheduled.
@@ -46,16 +45,14 @@ public class ClimbExample extends Command {
     public void execute() {
         if (isUpButtonPressed.get()) {
             // climb.climberUp(0.2);
-            climb.set1(-0.1);
-            climb.set2(0.1);
+            climb.climberUp(0.36);
         } else if (isDownButtonPressed.get()) {
-            climb.set1(0.1);
-            climb.set2(-0.1);
+            climb.climberDown(0.36);
         } else if (isUpButtonPressed2.get()) {
             // climb.climberUp(0.2);
-            climb.set2(0.1);
+            // climb.set2(0.1);
         } else if (isDownButtonPressed2.get()) {
-            climb.set2(-0.1);
+            // climb.set2(-0.1);
         } else {
             climb.stop();
         }

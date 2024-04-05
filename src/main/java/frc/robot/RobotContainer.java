@@ -80,7 +80,7 @@ public class RobotContainer {
 
                 Shooter.setDefaultCommand(
                                 new ShooterCommand(Shooter,
-                                                () -> controllerXbox.x().getAsBoolean(), // speaker shoot
+                                                () -> controllerXbox.button(100).getAsBoolean(), // speaker shoot
                                                 () -> controllerXbox.y().getAsBoolean(), // amp shoot
                                                 () -> controllerXbox.a().getAsBoolean(), // intake
                                                 () -> controllerXbox.b().getAsBoolean())); // intake reverse
@@ -148,6 +148,7 @@ public class RobotContainer {
                 // neo -0.35
                 // redline -0.7
                 // driveXbox.rightBumper().whileTrue(drivebase.rotateDriveBaseToSpeakerCommand());
+                controllerXbox.x().onTrue(Shooter.shootNoteCommand(50, -0.8));
                 driveXbox.leftTrigger().onTrue(drivebase.zeroGyroCommand());
         }
 

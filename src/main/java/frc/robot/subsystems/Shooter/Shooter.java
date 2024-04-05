@@ -125,6 +125,18 @@ public class Shooter extends SubsystemBase {
         // }
     }
 
+    public void moveNoteToFeeder() {
+        if (sensorInput.get() == true) {
+            runFeederMotor(0.2);
+        } else {
+            stop();
+        }
+    }
+
+    public Command shootNoteCommand(double desiredShooterVelocity, double feederOutput) {
+        return run(() -> shoot(desiredShooterVelocity, feederOutput)).withTimeout(1.5);
+    }
+
     public Command getNoteCommand(double feederOutput, double intakeSparkMaxOutput, double intakeFeederSparkMaxOutput) {
         return run(() -> getNote(feederOutput, intakeSparkMaxOutput, intakeFeederSparkMaxOutput));
     }

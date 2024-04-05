@@ -17,8 +17,8 @@ import frc.robot.Constants;
 
 public class Climb extends SubsystemBase {
 
-    final CANSparkMax leaderMotor = new CANSparkMax(52, MotorType.kBrushless);
-    final CANSparkMax followerMotor = new CANSparkMax(54, MotorType.kBrushless);
+    final CANSparkMax leaderMotor = new CANSparkMax(58, MotorType.kBrushless);
+    final CANSparkMax followerMotor = new CANSparkMax(57, MotorType.kBrushless);
     private RelativeEncoder leaderEncoder = leaderMotor.getEncoder();
     private RelativeEncoder followerEncoder = followerMotor.getEncoder();
     private boolean reachedTheLowestPoint = false;
@@ -83,11 +83,11 @@ public class Climb extends SubsystemBase {
         // } else {
         // followerMotor.stopMotor();
         // }
-        if (leaderEncoder.getPosition() <= 40) {
+        if (leaderEncoder.getPosition() <= 47) {
             leaderMotor.set(absoluteOutput);
         }
 
-        if (followerEncoder.getPosition() >= -40) {
+        if (followerEncoder.getPosition() >= -47) {
             followerMotor.set(-1 * absoluteOutput);
         }
     }
@@ -100,6 +100,16 @@ public class Climb extends SubsystemBase {
         if (followerEncoder.getPosition() <= -1.5) {
             followerMotor.set(absoluteOutput);
         }
+    }
+
+    public void climberUpWithoutLimit(double absoluteOutput) {
+        leaderMotor.set(absoluteOutput);
+        followerMotor.set(-1 * absoluteOutput);
+    }
+
+    public void climberDownWithoutLimit(double absoluteOutput) {
+        leaderMotor.set(-1 * absoluteOutput);
+        followerMotor.set(absoluteOutput);
     }
 
     public void stop() {

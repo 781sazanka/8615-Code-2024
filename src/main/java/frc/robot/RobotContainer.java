@@ -53,7 +53,7 @@ public class RobotContainer {
         private final CommandXboxController controllerXbox = new CommandXboxController(
                         Constants.Controller.controllerXboxID);
         private final CommandXboxController driveXbox = new CommandXboxController(Constants.Controller.driveXboxID);
-        // private final Shooter Shooter = new Shooter();
+        private final Shooter Shooter = new Shooter();
         private final Climb Climb = new Climb();
         private final Pivot Pivot = new Pivot();
         private final Camera cam = new Camera();
@@ -61,9 +61,9 @@ public class RobotContainer {
         private final ShootToSpeaker shootToSpeaker = new ShootToSpeaker();
         private final Vision vision = new Vision();
 
-        // private final SendableChooser<Command> autoChooser;
+        private final SendableChooser<Command> autoChooser;
 
-        // private final AutoCommand autoShoot = new AutoCommand(Shooter, Pivot);
+        // private final AutoCommand autoShoot = new AutoCommand(Shooter);
 
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -73,45 +73,47 @@ public class RobotContainer {
          */
         public RobotContainer() {
                 // NamedCommands.registerCommand("getNote", autoShoot.intake());
-                // NamedCommands.registerCommand("shootNote", autoShoot.score());
+                // NamedCommands.registerCommand("Shoot", autoShoot.score());
+                // NamedCommands.registerCommand("Intake", autoShoot.intake());
                 // NamedCommands.registerCommand("lookAtTarget", new LookAtTarget(drivebase));
+                // NamedCommands.registerCommand("shootNote2", new autoShoot.score());
 
-                // Shooter.setDefaultCommand(
-                // new ShooterCommand(Shooter,
-                // () -> controllerXbox.x().getAsBoolean(), // speaker shoot
-                // () -> controllerXbox.y().getAsBoolean(), // amp shoot
-                // () -> controllerXbox.a().getAsBoolean(), // intake
-                // () -> controllerXbox.b().getAsBoolean())); // intake reverse
+                Shooter.setDefaultCommand(
+                                new ShooterCommand(Shooter,
+                                                () -> controllerXbox.x().getAsBoolean(), // speaker shoot
+                                                () -> controllerXbox.y().getAsBoolean(), // amp shoot
+                                                () -> controllerXbox.a().getAsBoolean(), // intake
+                                                () -> controllerXbox.b().getAsBoolean())); // intake reverse
 
-                Climb.setDefaultCommand(
-                                new ClimbExample(Climb,
-                                                () -> controllerXbox.rightTrigger().getAsBoolean(),
-                                                () -> controllerXbox.leftTrigger().getAsBoolean(),
-                                                () -> controllerXbox.povUp().getAsBoolean(),
-                                                () -> controllerXbox.povDown().getAsBoolean()));
+                // Climb.setDefaultCommand(
+                // new ClimbExample(Climb,
+                // () -> controllerXbox.rightBumper().getAsBoolean(),
+                // () -> controllerXbox.leftBumper().getAsBoolean(),
+                // () -> controllerXbox.povRight().getAsBoolean(),
+                // () -> controllerXbox.povLeft().getAsBoolean()));
 
                 // Pivot.setDefaultCommand(
                 // new PivotCommand(Pivot,
-                // () -> controllerXbox.rightBumper().getAsBoolean(),
-                // () -> controllerXbox.leftBumper().getAsBoolean(),
-                // () -> controllerXbox.rightTrigger().getAsBoolean(),
-                // () -> controllerXbox.button(1000).getAsBoolean()));
+                // () -> driveXbox.rightBumper().getAsBoolean(),
+                // () -> driveXbox.leftBumper().getAsBoolean(),
+                // () -> driveXbox.rightTrigger().getAsBoolean(),
+                // () -> driveXbox.button(1000).getAsBoolean()));
 
                 cam.cameraStream();
 
-                // Command driveFieldOrientedAnglularVelocity = drivebase.driveCommand(
-                // () -> -1 * MathUtil.applyDeadband(driveXbox.getLeftY(),
-                // OperatorConstants.LEFT_Y_DEADBAND),
-                // () -> -1 * MathUtil.applyDeadband(driveXbox.getLeftX(),
-                // OperatorConstants.LEFT_X_DEADBAND),
-                // () -> -1 * driveXbox.getRightX() * 0.7);
+                Command driveFieldOrientedAnglularVelocity = drivebase.driveCommand(
+                                () -> -1 * MathUtil.applyDeadband(driveXbox.getLeftY(),
+                                                OperatorConstants.LEFT_Y_DEADBAND),
+                                () -> -1 * MathUtil.applyDeadband(driveXbox.getLeftX(),
+                                                OperatorConstants.LEFT_X_DEADBAND),
+                                () -> -1 * driveXbox.getRightX() * 0.7);
 
-                // drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
+                drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
 
                 configureBindings();
 
-                // autoChooser = AutoBuilder.buildAutoChooser("New Auto");
-                // SmartDashboard.putData("Auto Chooser", autoChooser);
+                autoChooser = AutoBuilder.buildAutoChooser();
+                SmartDashboard.putData("Auto Chooser", autoChooser);
         }
 
         /**
@@ -146,7 +148,7 @@ public class RobotContainer {
                 // neo -0.35
                 // redline -0.7
                 // driveXbox.rightBumper().whileTrue(drivebase.rotateDriveBaseToSpeakerCommand());
-                driveXbox.leftBumper().onTrue(drivebase.zeroGyroCommand());
+                driveXbox.leftTrigger().onTrue(drivebase.zeroGyroCommand());
         }
 
         /**
@@ -157,7 +159,7 @@ public class RobotContainer {
         public Command getAutonomousCommand() {
                 // An example command will be run in autonomous
                 // return drivebase.getAutonomousCommand("Preload Auto");
-                // return autoChooser.getSelected();
-                return null;
+                return autoChooser.getSelected();
+                // return null;
         }
 }

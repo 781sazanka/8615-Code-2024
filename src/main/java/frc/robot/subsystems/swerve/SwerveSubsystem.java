@@ -74,7 +74,7 @@ public class SwerveSubsystem extends SubsystemBase {
     // meters to get meters/second.
     // The gear ratio is 6.75 motor revolutions per wheel rotation.
     // The encoder resolution per motor revolution is 1 per motor revolution.
-    double driveConversionFactor = SwerveMath.calculateMetersPerRotation(Units.inchesToMeters(4), 6.75);
+    double driveConversionFactor = SwerveMath.calculateMetersPerRotation(Units.inchesToMeters(4), 6.12);
     System.out.println("\"conversionFactor\": {");
     System.out.println("\t\"angle\": " + angleConversionFactor + ",");
     System.out.println("\t\"drive\": " + driveConversionFactor);
@@ -282,6 +282,7 @@ public class SwerveSubsystem extends SubsystemBase {
    * @param translationY     Translation in the Y direction. Cubed for smoother
    *                         controls.
    * @param angularRotationX Angular velocity of the robot to set. Cubed for
+   * 
    *                         smoother controls.
    * @return Drive command.
    */
@@ -292,8 +293,8 @@ public class SwerveSubsystem extends SubsystemBase {
       // Make the robot move
       swerveDrive.drive(
           new Translation2d(
-              calcY(translationX, translationY) * swerveDrive.getMaximumVelocity() * 0.33,
-              calcX(translationX, translationY) * swerveDrive.getMaximumVelocity() * 0.33),
+              calcY(translationX, translationY) * swerveDrive.getMaximumVelocity() * 0.5,
+              calcX(translationX, translationY) * swerveDrive.getMaximumVelocity() * 0.5),
 
           // new Translation2d(Math.pow(translationX.getAsDouble(), 3) *
           // swerveDrive.getMaximumVelocity() * 0.33,

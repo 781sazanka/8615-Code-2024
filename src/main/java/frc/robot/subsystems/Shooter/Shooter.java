@@ -24,9 +24,9 @@ public class Shooter extends SubsystemBase {
     final TalonFX motorFollower = new TalonFX(1, "rio");
 
     final CANSparkMax sparkMaxFeederMotor = new CANSparkMax(51, MotorType.kBrushless);
-    final CANSparkMax sparkMaxIntakeMotor = new CANSparkMax(52, MotorType.kBrushless);
-    final CANSparkMax sparkMaxIntakeFeederMotor = new CANSparkMax(54, MotorType.kBrushless);
-    final DigitalInput sensorInput = new DigitalInput(9);
+    final CANSparkMax sparkMaxIntakeMotor = new CANSparkMax(54, MotorType.kBrushless);
+    final CANSparkMax sparkMaxIntakeFeederMotor = new CANSparkMax(52, MotorType.kBrushless);
+    final DigitalInput sensorInput = new DigitalInput(7);
 
     final ControlMode mode = com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput;
     int count = 0;
@@ -88,10 +88,11 @@ public class Shooter extends SubsystemBase {
         SmartDashboard.putNumber("[Shooter] feeder motor speed", sparkMaxFeederMotor.getEncoder().getVelocity());
         SmartDashboard.putBoolean("[Shooter] shooter is clear", isNoteInFeeder());
         SmartDashboard.putBoolean("[Shooter]", sensorInput.get());
+        System.out.println(sensorInput.get());
     }
 
     public void shoot(double desiredShooterVelocity, double feederOutput) {
-        double acceptableVelocityTolerance = 2;
+        double acceptableVelocityTolerance = 10;
 
         // runShooterMotor(desiredShooterVelocity * 0.6);
         // if (getShooterVelocity() + acceptableVelocityTolerance >=

@@ -16,18 +16,22 @@ public class AutoCommand {
     static Shooter shooter;
     static Pivot pivot;
 
-    public AutoCommand(Shooter shooter, Pivot pivot) {
+    public AutoCommand(Shooter shooter) {
         AutoCommand.shooter = shooter;
-        AutoCommand.pivot = pivot;
+        // AutoCommand.pivot = pivot;
 
     }
 
     public Command intake() {
-        return Commands.sequence(shooter.getNoteCommand(0, 0, 0).until(() -> !shooter.isNoteInFeeder()));
+        return Commands.sequence(shooter.getNoteCommand(0.2, -0.9, -0.3).until(() -> !shooter.isNoteInFeeder()));
     }
 
     public Command score() {
-        return Commands.run(() -> shooter.shoot(50, -0.7), shooter).withTimeout(1);
+        return Commands.run(() -> shooter.shoot(40, -0.7), shooter).withTimeout(1);
+    }
+
+    public Command scoreInOneSec() {
+        return new RunCommand(() -> shooter.shoot(0, 0), shooter);
     }
 
     public Command rotatePivot(double angle) {

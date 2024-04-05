@@ -1109,40 +1109,6 @@
         "vgap": 16.0,
         "titleType": 0,
         "tiles": {
-          "8,0": {
-            "size": [
-              2,
-              2
-            ],
-            "content": {
-              "_type": "Gyro",
-              "_source0": "network_table:///SmartDashboard/[Swerve] rotation in degrees",
-              "_title": "SmartDashboard/[Swerve] rotation in degrees",
-              "_glyph": 148,
-              "_showGlyph": false,
-              "Visuals/Major tick spacing": 45.0,
-              "Visuals/Starting angle": 180.0,
-              "Visuals/Show tick mark ring": true,
-              "Visuals/Counter clockwise": false
-            }
-          },
-          "6,0": {
-            "size": [
-              2,
-              2
-            ],
-            "content": {
-              "_type": "Gyro",
-              "_source0": "network_table:///SmartDashboard/navX-Sensor[1]/Value",
-              "_title": "SmartDashboard/navX-Sensor[1]/Value",
-              "_glyph": 148,
-              "_showGlyph": false,
-              "Visuals/Major tick spacing": 45.0,
-              "Visuals/Starting angle": 180.0,
-              "Visuals/Show tick mark ring": true,
-              "Visuals/Counter clockwise": false
-            }
-          },
           "0,5": {
             "size": [
               1,
@@ -1452,7 +1418,7 @@
               "imageHeight": 0
             }
           },
-          "3,5": {
+          "7,1": {
             "size": [
               2,
               1

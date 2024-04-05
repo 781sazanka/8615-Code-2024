@@ -47,11 +47,11 @@ public class ShooterCommand extends Command {
         }
 
         else if (button3.get()) {
-            shooter.getNote(-0.9, -0.9, 0);
+            shooter.getNote(-0.8, -0.9, -0.3);
         }
 
         else if (button4.get()) {
-            shooter.getNote(0.15, 0, 0);
+            shooter.getNote(0.2, 0.9, 0.5);
         }
 
         else {

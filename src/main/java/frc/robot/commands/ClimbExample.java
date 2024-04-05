@@ -51,8 +51,9 @@ public class ClimbExample extends Command {
         } else if (isUpButtonPressed2.get()) {
             // climb.climberUp(0.2);
             // climb.set2(0.1);
+            climb.climberUpWithoutLimit(0.12);
         } else if (isDownButtonPressed2.get()) {
-            // climb.set2(-0.1);
+            climb.climberDownWithoutLimit(0.12);
         } else {
             climb.stop();
         }

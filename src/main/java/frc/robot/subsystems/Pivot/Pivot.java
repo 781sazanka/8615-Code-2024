@@ -27,7 +27,7 @@ public class Pivot extends SubsystemBase {
     double maxEncoderValue = -1; // lowest position
     double minEncoderValue = -80; // highest position
 
-    public double lowestAbsoluteEncoderValue = 0.595;
+    public double lowestAbsoluteEncoderValue = 0.418;
 
     public Pivot() {
         int dioChannel = 0;
@@ -69,7 +69,7 @@ public class Pivot extends SubsystemBase {
 
     public void up() {
         double currentAbsoluteEncoderPosition = dutyCycleEncoder.getAbsolutePosition();
-        if (dutyCycleEncoder.isConnected() == true && currentAbsoluteEncoderPosition < 0.84) {
+        if (dutyCycleEncoder.isConnected() == true && currentAbsoluteEncoderPosition < 0.70) {
             motorLeader.set(-0.3);
         }
     }

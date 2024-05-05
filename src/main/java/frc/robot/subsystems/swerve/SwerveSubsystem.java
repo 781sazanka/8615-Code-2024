@@ -293,8 +293,8 @@ public class SwerveSubsystem extends SubsystemBase {
       // Make the robot move
       swerveDrive.drive(
           new Translation2d(
-              calcY(translationX, translationY) * swerveDrive.getMaximumVelocity() * 0.5,
-              calcX(translationX, translationY) * swerveDrive.getMaximumVelocity() * 0.5),
+              calcY(translationX, translationY) * swerveDrive.getMaximumVelocity() * 1,
+              calcX(translationX, translationY) * swerveDrive.getMaximumVelocity() * 1),
 
           // new Translation2d(Math.pow(translationX.getAsDouble(), 3) *
           // swerveDrive.getMaximumVelocity() * 0.33,
@@ -337,21 +337,7 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   public void updatePoseEstimator() {
-    NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
-    LimelightHelpers.PoseEstimate limelightMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
-    // if (limelightMeasurement.tagCount >= 2) {
-    poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
-    poseEstimator.addVisionMeasurement(
-        limelightMeasurement.pose,
-        limelightMeasurement.timestampSeconds);
-    // } else {
-    // poseEstimator.update(getHeading(), swerveDrive.getModulePositions());
-    // }
 
-    field.setRobotPose(poseEstimator.getEstimatedPosition());
-
-    SmartDashboard.putNumber("target angle",
-        Math.toDegrees(LimelightHelpers.getCameraPose3d_TargetSpace("limelight").getRotation().getZ()));
   }
 
   /**
@@ -374,10 +360,10 @@ public class SwerveSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    updatePoseEstimator();
+    // updatePoseEstimator();
 
-    SmartDashboard.putNumber("rotation",
-        Math.toDegrees(LimelightHelpers.getTargetPose3d_CameraSpace("limelight").getRotation().getZ()));
+    // SmartDashboard.putNumber("rotation",
+    // Math.toDegrees(LimelightHelpers.getTargetPose3d_CameraSpace("limelight").getRotation().getZ()));
   }
 
   @Override

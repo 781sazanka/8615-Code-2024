@@ -88,7 +88,7 @@ public class Shooter extends SubsystemBase {
         SmartDashboard.putNumber("[Shooter] feeder motor speed", sparkMaxFeederMotor.getEncoder().getVelocity());
         SmartDashboard.putBoolean("[Shooter] shooter is clear", isNoteInFeeder());
         SmartDashboard.putBoolean("[Shooter]", sensorInput.get());
-        System.out.println(sensorInput.get());
+        // System.out.println(sensorInput.get());
     }
 
     public void shoot(double desiredShooterVelocity, double feederOutput) {
@@ -102,10 +102,10 @@ public class Shooter extends SubsystemBase {
 
             // if (topSpeedCounter >= 5) {
             runFeederMotor(feederOutput);
-            // }
-            // }
-
         }
+        // }
+
+        // }
 
         feederLoaded = false;
 
@@ -134,7 +134,7 @@ public class Shooter extends SubsystemBase {
     }
 
     public Command shootNoteCommand(double desiredShooterVelocity, double feederOutput) {
-        return run(() -> shoot(desiredShooterVelocity, feederOutput)).withTimeout(1.5);
+        return run(() -> shoot(desiredShooterVelocity, feederOutput)).withTimeout(2);
     }
 
     public Command getNoteCommand(double feederOutput, double intakeSparkMaxOutput, double intakeFeederSparkMaxOutput) {
@@ -151,6 +151,16 @@ public class Shooter extends SubsystemBase {
 
     public boolean hasNoteShot() {
         return feederCleared;
+    }
+
+    public void moveNoteBack() {
+        runFeederMotor(0.2);
+        runShooterMotor(-5);
+    }
+
+    public Command moveNoteBackCommand() {
+        return run(() -> moveNoteBack()).until(() -> (sensorInput.get() == false)).withTimeout(1);
+
     }
 
     @Override

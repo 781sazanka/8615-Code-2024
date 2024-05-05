@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.3648131551003633,
-      "y": 5.525732896596748
+      "x": 1.5001569895805271,
+      "y": 6.0
     },
     "rotation": 0
   },
@@ -16,9 +16,9 @@
           "data": {
             "commands": [
               {
-                "type": "named",
+                "type": "path",
                 "data": {
-                  "name": "shootNote"
+                  "pathName": "leave"
                 }
               }
             ]

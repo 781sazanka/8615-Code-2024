@@ -80,24 +80,24 @@ public class RobotContainer {
 
                 Shooter.setDefaultCommand(
                                 new ShooterCommand(Shooter,
-                                                () -> controllerXbox.button(100).getAsBoolean(), // speaker shoot
-                                                () -> controllerXbox.y().getAsBoolean(), // amp shoot
-                                                () -> controllerXbox.a().getAsBoolean(), // intake
-                                                () -> controllerXbox.b().getAsBoolean())); // intake reverse
+                                                () -> driveXbox.button(100).getAsBoolean(), // speaker shoot
+                                                () -> driveXbox.y().getAsBoolean(), // amp shoot
+                                                () -> driveXbox.a().getAsBoolean(), // intake
+                                                () -> driveXbox.b().getAsBoolean())); // intake reverse
 
-                // Climb.setDefaultCommand(
-                // new ClimbExample(Climb,
-                // () -> controllerXbox.rightBumper().getAsBoolean(),
-                // () -> controllerXbox.leftBumper().getAsBoolean(),
-                // () -> controllerXbox.povRight().getAsBoolean(),
-                // () -> controllerXbox.povLeft().getAsBoolean()));
+                Climb.setDefaultCommand(
+                                new ClimbExample(Climb,
+                                                () -> controllerXbox.rightBumper().getAsBoolean(),
+                                                () -> controllerXbox.leftBumper().getAsBoolean(),
+                                                () -> controllerXbox.povRight().getAsBoolean(),
+                                                () -> controllerXbox.povLeft().getAsBoolean()));
 
-                // Pivot.setDefaultCommand(
-                // new PivotCommand(Pivot,
-                // () -> driveXbox.rightBumper().getAsBoolean(),
-                // () -> driveXbox.leftBumper().getAsBoolean(),
-                // () -> driveXbox.rightTrigger().getAsBoolean(),
-                // () -> driveXbox.button(1000).getAsBoolean()));
+                Pivot.setDefaultCommand(
+                                new PivotCommand(Pivot,
+                                                () -> controllerXbox.rightTrigger().getAsBoolean(),
+                                                () -> controllerXbox.leftTrigger().getAsBoolean(),
+                                                () -> controllerXbox.button(999).getAsBoolean(),
+                                                () -> controllerXbox.button(1000).getAsBoolean()));
 
                 cam.cameraStream();
 
@@ -148,7 +148,8 @@ public class RobotContainer {
                 // neo -0.35
                 // redline -0.7
                 // driveXbox.rightBumper().whileTrue(drivebase.rotateDriveBaseToSpeakerCommand());
-                controllerXbox.x().onTrue(Shooter.shootNoteCommand(50, -0.8));
+                driveXbox.x().onTrue(Shooter.shootNoteCommand(70, -0.8));
+                driveXbox.povDown().onTrue(Shooter.moveNoteBackCommand());
                 driveXbox.leftTrigger().onTrue(drivebase.zeroGyroCommand());
         }
 

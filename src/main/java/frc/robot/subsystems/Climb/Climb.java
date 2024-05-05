@@ -87,8 +87,8 @@ public class Climb extends SubsystemBase {
             leaderMotor.set(absoluteOutput);
         }
 
-        if (followerEncoder.getPosition() >= -47) {
-            followerMotor.set(-1 * absoluteOutput);
+        if (followerEncoder.getPosition() <= 47) {
+            followerMotor.set(absoluteOutput);
         }
     }
 
@@ -97,19 +97,19 @@ public class Climb extends SubsystemBase {
             leaderMotor.set(-1 * absoluteOutput);
         }
 
-        if (followerEncoder.getPosition() <= -1.5) {
-            followerMotor.set(absoluteOutput);
+        if (followerEncoder.getPosition() >= 1.5) {
+            followerMotor.set(-1 * absoluteOutput);
         }
     }
 
     public void climberUpWithoutLimit(double absoluteOutput) {
         leaderMotor.set(absoluteOutput);
-        followerMotor.set(-1 * absoluteOutput);
+        followerMotor.set(absoluteOutput);
     }
 
     public void climberDownWithoutLimit(double absoluteOutput) {
         leaderMotor.set(-1 * absoluteOutput);
-        followerMotor.set(absoluteOutput);
+        followerMotor.set(-1 * absoluteOutput);
     }
 
     public void stop() {
